@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const router = express.Router();
 // const phidget22 = require('phidget22');
-const flashgLights = require('./unitOperations/flashingLights')
+// const flashgLights = require('./unitOperations/flashingLights')
 
 let serverPotStatus = false;
 let serverGraphData = ['test'];
