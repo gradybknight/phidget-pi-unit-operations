@@ -23,7 +23,8 @@ function main() {
 function runExample() {
 
 	console.log('connected to server');
-	var ch = new phidget22.DigitalOutput();
+    var ch = new phidget22.DigitalOutput();
+    ch.setChannel(0);
 
 	var exTimer;
 

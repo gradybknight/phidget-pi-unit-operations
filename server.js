@@ -2,20 +2,41 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const router = express.Router();
-// const phidget22 = require('phidget22');
-// const flashgLights = require('./unitOperations/flashingLights')
+const fractionalStill = require('./unitOperations/fractionalStill')
 
+// pot still variables
 let serverPotStatus = false;
-let serverGraphData = ['test'];
+let serverGraphData = [];
+
+// fractional still variables
+let serverFractionalStatus = false;
+let fractionalGraphData = [];
+let serverRunOverview = {
+  currentBeaker:'',
+  currentClickCount:'',
+  beakerClickCount:'',
+  timeToCompBeacker:'',
+  timeToCompRun: '',
+  startAlcohol: 0,
+  startVolume: 0
+}
+
+
+
 
 const PORT = 3001;
 const app = express();
 
 app.use(morgan('dev'));
-// Configure body parser for AJAX requests
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+
+//     ----------
+//     | ROUTES |
+//     ----------
+
+// POT STILL
 router.route('/setpot')
   .post((req,res) => {
     serverPotStatus = req.body.desiredPotState
@@ -40,6 +61,20 @@ router.route('/potgraphdata')
     res.json({
       serverGraphData:serverGraphData
     });
+  })
+
+// Fractional Still
+
+router.route('/setfractional')
+  .post((req,res) => {
+    serverRunOverview.startAlcohol=parseInt(req.body.startAlcohol);
+    serverRunOverview.startVolum=parseInt(req.body.startVolume);
+    serverFractionalStatus=req.body.desiredFractionalState;
+    fractionalGraphData=[];
+    fractionalStill.runProgram(fractionalGraphData, serverFractionalStatus, serverRunOverview);
+    res.json({
+      serverFractionalStatus:serverFractionalStatus
+    })
   })
 
 

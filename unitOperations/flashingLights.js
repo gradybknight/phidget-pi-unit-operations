@@ -1,6 +1,6 @@
 const phidget22 = require('phidget22');
 
-modules.exports = {
+module.exports = {
     runDemo: function() {
         serverPotStatus ? serverGraphData = [] : '';
         var SERVER_PORT = 5661;
