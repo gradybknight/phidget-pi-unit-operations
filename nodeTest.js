@@ -82,5 +82,7 @@ flashingLights = {
     }
   }
 
+  console.log(`starting flashing lights`);
+
   flashingLights.runDemo();
   
