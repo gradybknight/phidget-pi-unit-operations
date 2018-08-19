@@ -81,4 +81,6 @@ flashingLights = {
         });
     }
   }
+
+  flashingLights.runDemo();
   
