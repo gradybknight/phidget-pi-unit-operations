@@ -15,7 +15,7 @@ let serverRunOverview = {
   currentBeaker:'',
   currentClickCountInBeaker:'',
   totalClickCountInBeaker:'',
-  timeToCompleteBeacker:'',
+  timeToCompleteBeaker:'',
   timeToCompleteRun: '',
   startAlcohol: 0,
   startVolume: 0

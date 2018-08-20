@@ -1,7 +1,7 @@
 // This module receives:
 // fractionalGraphData: array where each object is: x (elapsed time in seconds), y (temperature), id (Date.now() to use as identifier)
 // serverFractionalStatus: boolean to indicate running or not
-// serverRunOverview: object {currentBeaker, currentClickCountInBeaker, totalClickCountInBeaker, timeToCompleteBeacker, timeToCompleteRun, startAlcohol, startVolume}. All integers
+// serverRunOverview: object {currentBeaker, currentClickCountInBeaker, totalClickCountInBeaker, timeToCompleteBeaker, timeToCompleteRun, startAlcohol, startVolume, currentMessage}. All integers
 
 
 // import phidget library
@@ -31,11 +31,40 @@ module.exports = {
 
     startFractionalRun: function(conn, graphData, serverFractionalStatus, serverRunOverview) {
         if (this.convertAlcoholToDecimal(serverRunOverview) && this.convertVolumeToDecimal(serverRunOverview)) {
+            // build overall run array
+            let overallRunArray = this.buildOverallRunArray(serverRunOverview);
+            // update total projected run time
+            this.updateExpectedTotalRunTime(overallRunArray,serverRunOverview);
+            // turn on heating
+            serverRunOverview.currentMessage = 'Heating has started';
+            serverFractionalStatus = true;
+            // check temp every 10 minutes until temperature is reached
 
+
+            // updated projected run time
+            // wait ten minutes
+
+            // run main fractional program
+
+            for (let beaker=0; beaker < 21; beaker++) {
+                this.updateServerRunSummaryForNewlyStartedBeaker(overallRunArray[beaker],serverRunOverview);
+            }
         } else {
             console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverview.startAlcohol}, volume: ${serverRunOverview.startVolume}`);
         }
 
+    },
+    updateServerRunSummaryForNewlyStartedBeaker: function(currentBeaker, serverRunOverview){
+        serverRunOverview.totalClickCountInBeaker = currentBeaker.cycleCount;
+        serverRunOverview.timeToCompleteBeaker = currentBeaker.cycleCount * (currentBeaker.closeTime + 0.5);
+    },
+    updateExpectedTotalRunTime: function(overallRunArray, serverRunOverview) {
+        let totalTime = 0;
+        for (let i= 0; i<21; i++) {
+            let beakerTime = (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
+            totalTime = totalTime + beakerTime;
+        }
+        serverRunOverview.timeToCompleteRun = totalTime;
     },
     convertAlcoholToDecimal: function(serverRunOverview) {
         let receivedAlcoholValue = parseFloat(serverRunOverview.startAlcohol);
