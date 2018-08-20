@@ -13,10 +13,10 @@ let serverFractionalStatus = false;
 let fractionalGraphData = [];
 let serverRunOverview = {
   currentBeaker:'',
-  currentClickCount:'',
-  beakerClickCount:'',
-  timeToCompBeacker:'',
-  timeToCompRun: '',
+  currentClickCountInBeaker:'',
+  totalClickCountInBeaker:'',
+  timeToCompleteBeacker:'',
+  timeToCompleteRun: '',
   startAlcohol: 0,
   startVolume: 0
 }
@@ -63,8 +63,7 @@ router.route('/potgraphdata')
     });
   })
 
-// Fractional Still
-
+// FRACTIONAL STILL
 router.route('/setfractional')
   .post((req,res) => {
     serverRunOverview.startAlcohol=parseInt(req.body.startAlcohol);
