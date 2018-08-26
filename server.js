@@ -18,7 +18,8 @@ let serverRunOverview = {
   timeToCompleteBeaker:'',
   timeToCompleteRun: '',
   startAlcohol: 0,
-  startVolume: 0
+  startVolume: 0,
+  currentMessage:'not running'
 }
 
 
