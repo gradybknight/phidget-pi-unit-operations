@@ -2,7 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const router = express.Router();
-const fractionalStill = require('./unitOperations/fractionalStill')
+// const fractionalStill = require('./unitOperations/fractionalStill');
+const fractionalStill = require('./secondTry');
 
 // pot still variables
 let serverPotStatus = false;
@@ -71,10 +72,35 @@ router.route('/setfractional')
     serverRunOverview.startVolum=parseInt(req.body.startVolume);
     serverFractionalStatus=req.body.desiredFractionalState;
     fractionalGraphData=[];
-    fractionalStill.runProgram(fractionalGraphData, serverFractionalStatus, serverRunOverview);
+    fractionalStill.startFractionalRun(fractionalGraphData, serverFractionalStatus, serverRunOverview);
     res.json({
       serverFractionalStatus:serverFractionalStatus
     })
+  })
+
+router.route('/fractionalstatus')
+  .get((req,res) => {
+    console.log('front end asked what is the pot status')
+    console.log(`server status is ${serverFractionalStatus}`);
+    res.json({
+      serverFractionalStatus:serverFractionalStatus
+    });
+  })
+
+router.route('/fractionalgraphdata')
+  .get((req,res) => {
+    console.log('front end asked for graph data')
+    res.json({
+      fractionalGraphData:fractionalGraphData
+    });
+  })
+
+router.route('/fractionalsummary')
+  .get((req,res) => {
+    console.log('front end asked for graph data')
+    res.json({
+      serverRunOverview:serverRunOverview
+    });
   })
 
 

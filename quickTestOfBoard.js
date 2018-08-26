@@ -16,60 +16,63 @@ function main() {
 }
 
 function runExample() {
-    let controlSystem = initializePhidgetBoards();
+    initializePhidgetBoards().then( (controlSystem) => { runFracProcess( controlSystem ) });
+}
 
+function runFracProcess(controlSystem){
     controlSystem.solenoid.setState(true);
     controlSystem.heatingElement.setState(true);
-    controlSystem.extendArm.setState(true);
-    console.log(`temp requested at: ${Date.now()}`)
-    console.log(`Temperature returned at ${Date.now()} with temperature: ${controlSystem.tempProbe.getTemperature()}`)
     
+
     setTimeout(() => {
         controlSystem.solenoid.setState(false);
-    }, 5000);
+    }, 15000);
     setTimeout(() => {
         controlSystem.heatingElement.setState(false);
-    }, 5000);
-    setTimeout(() => {
-        controlSystem.extendArm.setState(false);
-        controlSystem.retractArm.setState(true);
-    }, 5000);
-    setTimeout(() => {
-        controlSystem.retractArm.setState(false);
-        console.log(`that's it.`);
-    }, 11000);
-    
-    async function initializePhidgetBoards() {
-        let heatingElement = new DigitalOutput();
-        heatingElement.setChannel(0);
-        await heatingElement.open();
-
-        let solenoid = new DigitalOutput();
-        solenoid.setChannel(1);
-        await solenoid.open();
-        
-        let extendArm = new DigitalOutput();
-        extendArm.setChannel(2);
-        await extendArm.open();
-    
-        let retractArm = new DigitalOutput();
-        retractArm.setChannel(3);
-        await retractArm.open();
-    
-        
-        var tempProbe = new phidget22.TemperatureSensor();
-        await tempProbe.open();
-
-        let phidgetBoardMapping = {
-            heatingElement:heatingElement,
-            solenoid:solenoid,
-            extendArm:extendArm,
-            retractArm:retractArm,
-            tempProbe:tempProbe
-        }
-        return phidgetBoardMapping;
-    }
+    }, 10000);
+    setInterval(() => {
+        console.log(`temp requested at: ${Date.now()}`)
+        console.log(`Temperature returned at ${Date.now()}`)
+        let tempreading = controlSystem.tempProbe.getTemperature();
+        console.log(tempreading);
+    }, 1000);
 }
+    
+async function initializePhidgetBoards() {
+    let heatingElement = new phidget22.DigitalOutput();
+    heatingElement.setChannel(0);
+    await heatingElement.open();
+
+    let solenoid = new phidget22.DigitalOutput();
+    solenoid.setChannel(1);
+    await solenoid.open();
+
+    let extendArm = new phidget22.DigitalOutput();
+    extendArm.setChannel(2);
+    await extendArm.open();
+
+    let retractArm = new phidget22.DigitalOutput();
+    retractArm.setChannel(3);
+    await retractArm.open();
+
+
+    var tempProbe = new phidget22.TemperatureSensor();
+    tempProbe.setChannel(0);
+    tempProbe.setDataInterval(500);
+    await tempProbe.open();
+    console.log('temp probe attached');
+    
+
+    let phidgetBoardMapping = {
+        heatingElement:heatingElement,
+        solenoid:solenoid,
+        extendArm:extendArm,
+        retractArm:retractArm,
+        tempProbe:tempProbe
+    }
+    return phidgetBoardMapping;
+}
+
 
 if (require.main === module)
 	main();
