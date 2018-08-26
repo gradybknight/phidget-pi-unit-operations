@@ -3,8 +3,8 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const router = express.Router();
 // const fractionalStill = require('./unitOperations/fractionalStill');
-// const fractionalStill = require('./secondTry');
-import { startFractionalRun } from './secondTry';
+const startFractionalRun = require('./secondTry');
+// import { startFractionalRun } from './secondTry';
 
 // pot still variables
 let serverPotStatus = false;

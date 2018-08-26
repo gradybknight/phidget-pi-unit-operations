@@ -270,4 +270,4 @@ moveArm = function(direction, duration) {
     }
 };
 
-export { startFractionalRun };
+module.exports.startFractionalRun = startFractionalRun;
