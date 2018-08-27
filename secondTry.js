@@ -26,6 +26,7 @@ startFractionalRun =  function(fractionalGraphData, serverFractionalStatus, serv
 
 
 initializePhidgetConnection = function() {
+    let hostname = 'localhost';
     console.log('connecting to:' + hostname);
 	var conn = new phidget22.Connection(SERVER_PORT, hostname, { name: 'Server Connection', passwd: '' });
 	conn.connect()
