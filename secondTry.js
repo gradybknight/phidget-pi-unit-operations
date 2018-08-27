@@ -17,6 +17,7 @@ const preHeatEndTemperature = 45;
 startFractionalRun =  function(fractionalGraphData, serverFractionalStatus, serverRunOverview) {
     // build data for run
     overallRunArray = buildDataForRun(serverRunOverview);
+    console.log(overallRunArray);
     // initialize phidget connection
     let startTime = Date.now();
     initializePhidgetConnection();    
