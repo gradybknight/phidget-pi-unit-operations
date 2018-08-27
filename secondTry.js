@@ -81,7 +81,7 @@ buildDataForRun = function(serverRunOverview) {
         // each element of array: {closeTime, targetVolume, beakerID, cycleCount}
         let overallRunArray = this.buildOverallRunArray(serverRunOverview);
         // update total projected run time
-        this.updateExpectedTotalRunTime(overallRunArray,serverRunOverview);
+        this.updateExpectedTotalRunTime(overallRunArray, serverRunOverview);
         return overallRunArray;
     } else {
         console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverview.startAlcohol}, volume: ${serverRunOverview.startVolume}`);
@@ -177,7 +177,7 @@ function runEnclosingArrayCycle(fractionInformation) {
     runOneCycle(); // one cycle opens solenoid for 500 ms; closes for beaker's close time
 }
 
-updateExpectedTotalRunTime = function() {
+updateExpectedTotalRunTime = function(overallRunArray, serverRunOverview) {
     let totalTime = 0;
     for (let i= 0; i<21; i++) {
         let beakerTime = (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
