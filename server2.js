@@ -39,6 +39,10 @@ let serverRunOverview = {
 // Routes
 // =============================================================
 
+app.get("*", function(req, res){
+    console.log('got this')
+})
+
 // FRACTIONAL STILL
 app.post("/setfractional", function(req,res) {
     serverRunOverview.startAlcohol=parseInt(req.body.startAlcohol);
@@ -51,7 +55,7 @@ app.post("/setfractional", function(req,res) {
     })
 });
 
-app.get("/fractionalstatus", function(req,res) {
+app.get("fractionalstatus", function(req,res) {
     console.log('front end asked what is the fractional status')
     console.log(`server status is ${serverFractionalStatus}`);
     res.json({
