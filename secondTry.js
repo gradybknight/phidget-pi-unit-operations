@@ -78,12 +78,14 @@ async function initializePhidgetBoards() {
 }
 
 buildDataForRun = function(serverRunOverview) {
+    console.log(serverRunOverview);
     if (this.convertAlcoholToDecimal(serverRunOverview) && this.convertVolumeToDecimal(serverRunOverview)) {
         // build overall run array
         // each element of array: {closeTime, targetVolume, beakerID, cycleCount}
         let overallRunArray = this.buildOverallRunArray(serverRunOverview);
         // update total projected run time
         this.updateExpectedTotalRunTime(overallRunArray, serverRunOverview);
+        console.log(serverRunOverview);
         return overallRunArray;
     } else {
         console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverview.startAlcohol}, volume: ${serverRunOverview.startVolume}`);
@@ -208,7 +210,7 @@ convertVolumeToDecimal = function(serverRunOverview) {
 };
 
 buildOverallRunArray = function(serverRunOverview) {
-    let volumeEthanol = serverRunOverview.receivedAlcoholValue * serverRunOverview.receivedVolumeValue;
+    let volumeEthanol = serverRunOverview.startAlcohol * serverRunOverview.startVolume;
     let volumeMethanol = volumeEthanol * 0.03;
     let volumeHeads = volumeEthanol * 0.05;
     let volumeTails = volumeEthanol * 0.05;
