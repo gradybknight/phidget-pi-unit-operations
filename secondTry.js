@@ -92,7 +92,7 @@ buildDataForRun = function(serverRunOverview) {
     }
 };
 
-function runFracProcess() {
+function runFracProcess(controlSystem) {
     // pre-heat system
     console.log(`got to line 95`);
     controlSystem.heatingElement.setState(true);
