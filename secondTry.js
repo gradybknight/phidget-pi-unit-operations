@@ -92,6 +92,7 @@ buildDataForRun = function(serverRunOverview) {
 
 function runFracProcess() {
     // pre-heat system
+    console.log(`got to line 95`);
     controlSystem.heatingElement.setState(true);
     serverFractionalStatus = true;
     serverRunOverview.currentMessage = 'Pre-heating system';
