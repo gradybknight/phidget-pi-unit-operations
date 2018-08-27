@@ -256,8 +256,8 @@ buildOverallRunArray = function(serverRunOverview) {
             beakerArray[i].closeTime = 8000
         }
     }
-    beakerArray[lastFractionForHeads].nextFunction = this.moveArm("extend", 9000);
-    beakerArray[lastFractionForHearts].nextFunction = this.moveArm("extend", 11000);
+    // beakerArray[lastFractionForHeads].nextFunction = this.moveArm("extend", 9000);
+    // beakerArray[lastFractionForHearts].nextFunction = this.moveArm("extend", 11000);
     return beakerArray;
 };
 
