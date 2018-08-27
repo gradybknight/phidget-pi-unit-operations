@@ -70,7 +70,7 @@ router.route('/potgraphdata')
 router.route('/setfractional')
   .post((req,res) => {
     serverRunOverview.startAlcohol=parseInt(req.body.startAlcohol);
-    serverRunOverview.startVolum=parseInt(req.body.startVolume);
+    serverRunOverview.startVolume=parseInt(req.body.startVolume);
     serverFractionalStatus=req.body.desiredFractionalState;
     fractionalGraphData=[];
     startFractionalRun(fractionalGraphData, serverFractionalStatus, serverRunOverview);
