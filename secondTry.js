@@ -15,6 +15,7 @@ const lastFractionForHearts = 16;
 const preHeatEndTemperature = 45;
 
 startFractionalRun =  function(fractionalGraphData, serverFractionalStatus, serverRunOverview) {
+    console.log('started frac in secondTry.js')
     // build data for run
     overallRunArray = buildDataForRun(serverRunOverview);
     console.log(overallRunArray);

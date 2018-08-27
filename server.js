@@ -73,6 +73,7 @@ router.route('/setfractional')
     serverRunOverview.startVolume=parseInt(req.body.startVolume);
     serverFractionalStatus=req.body.desiredFractionalState;
     fractionalGraphData=[];
+    console.log('starting frac');
     startFractionalRun(fractionalGraphData, serverFractionalStatus, serverRunOverview);
     res.json({
       serverFractionalStatus:serverFractionalStatus
