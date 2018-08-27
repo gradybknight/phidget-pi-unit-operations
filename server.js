@@ -98,7 +98,7 @@ router.route('/fractionalgraphdata')
 
 router.route('/fractionalsummary')
   .get((req,res) => {
-    console.log('front end asked for graph data')
+    console.log('front end asked for fractional summary')
     res.json({
       serverRunOverview:serverRunOverview
     });
