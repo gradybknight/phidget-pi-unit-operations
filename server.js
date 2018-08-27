@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const router = express.Router();
 // const fractionalStill = require('./unitOperations/fractionalStill');
-const startFractionalRun = require('./secondTry');
+const fractionalStill = require('./secondTry');
 // import { startFractionalRun } from './secondTry';
 
 // pot still variables
@@ -74,7 +74,7 @@ router.route('/setfractional')
     serverFractionalStatus=req.body.desiredFractionalState;
     fractionalGraphData=[];
     console.log('starting frac');
-    startFractionalRun(fractionalGraphData, serverFractionalStatus, serverRunOverview);
+    fractionalStill.startFractionalRun(fractionalGraphData, serverFractionalStatus, serverRunOverview);
     res.json({
       serverFractionalStatus:serverFractionalStatus
     })
