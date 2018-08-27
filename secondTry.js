@@ -14,7 +14,7 @@ const lastFractionForHeads = 6;
 const lastFractionForHearts = 16;
 const preHeatEndTemperature = 45;
 
-const startFractionalRun =  function(fractionalGraphData, serverFractionalStatus, serverRunOverview) {
+startFractionalRun =  function(fractionalGraphData, serverFractionalStatus, serverRunOverview) {
     console.log('started frac in secondTry.js')
     // build data for run
     overallRunArray = buildDataForRun(serverRunOverview);
@@ -187,11 +187,10 @@ updateExpectedTotalRunTime = function() {
 };
 
 convertAlcoholToDecimal = function(serverRunOverview) {
-    let receivedAlcoholValue = parseFloat(serverRunOverview.startAlcohol);
-    if (receivedAlcoholValue > 100) {
-        receivedAlcoholValue = receivedAlcoholValue / 100;
-        serverRunOverview.startAlcohol = receivedAlcoholValue;
-    } else if (receivedAlcoholValue <= 0) {
+    serverRunOverview.startAlcohol = parseFloat(serverRunOverview.startAlcohol);
+    if (serverRunOverview.startAlcohol > 1) {
+        serverRunOverview.startAlcohol = serverRunOverview.startAlcohol / 100;
+    } else if (serverRunOverview.startAlcohol <= 0) {
         return false;
     }
     return true;
@@ -199,7 +198,7 @@ convertAlcoholToDecimal = function(serverRunOverview) {
 
 convertVolumeToDecimal = function(serverRunOverview) {
     serverRunOverview.startVolume = parseFloat(serverRunOverview.startVolume)*1000;
-    if (receivedVolumeValue <= 0) {
+    if (serverRunOverview.startVolume <= 0) {
         return false;
     }
     return true; 
