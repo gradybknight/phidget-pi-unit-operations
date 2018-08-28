@@ -1,7 +1,15 @@
 function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, serverRunOverview, fractionalControlSystem) {
     let overallArray = [];
     let startTime = Date.now();
-    
+
+    let fractionalGraphData = fractionalGraphData;
+    let serverFractionalStatus = serverFractionalStatus;
+    let serverRunOverview = serverRunOverview;
+    let fractionalControlSystem = fractionalControlSystem;
+
+    console.log(fractionalControlSystem);
+
+
     function buildOuterArray(serverRunOverview) {
         let numberOfCycles = Math.floor(serverRunOverview.startAlcohol * serverRunOverview.startVolume);
         for (let i=0; i<numberOfCycles; i++) {

@@ -80,8 +80,6 @@ async function initializePhidgetBoards( fractionalControlSystem) {
   await tempProbe.open();
   fractionalControlSystem.tempProbe = tempProbe;
   console.log('temp probe attached');
-  console.log('inside initialize phidget:');
-  console.log(fractionalControlSystem);
 
   // fractionalControlSystem = {
   //     heatingElement:heatingElement,
@@ -180,7 +178,7 @@ router.route('/simplifiedprogram')
     fractionalGraphData=[];
     simplifiedProgram.startSimplifiedProgram(fractionalGraphData,serverFractionalStatus,serverRunOverview,fractionalControlSystem);
     res.json({
-      fractionalTemp:fractionalTemp
+      message:'started simple program'
     });
   })
 
