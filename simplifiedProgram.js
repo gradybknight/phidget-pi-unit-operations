@@ -51,9 +51,9 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
         };
         runOneCycle();
     };
-    function waitTwoMinutesAfterPreHeat(fractionalControlSystem, serverRunOverview, overallArray, fractionalGraphData) {
-        let twoMinutes = 2 * 60 * 1000;
-        setTimeout( () => processOverallArray(fractionalControlSystem, serverRunOverview, overallArray, fractionalGraphData), twoMinutes)
+    function waitAfterPreHeat(fractionalControlSystem, serverRunOverview, overallArray, fractionalGraphData) {
+        let waitTime = .25 * 60 * 1000;
+        setTimeout( () => processOverallArray(fractionalControlSystem, serverRunOverview, overallArray, fractionalGraphData), waitTime)  
     };
     function logTemperature(fractionalControlSystem, fractionalGraphData, startTime) {
         let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
@@ -71,7 +71,7 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
     console.log(overallArray);
     fractionalControlSystem.heatingElement.setState(true);
     console.log('heating element is on');
-    waitTwoMinutesAfterPreHeat(fractionalControlSystem, serverFractionalStatus, overallArray, fractionalGraphData);
+    waitAfterPreHeat(fractionalControlSystem, serverFractionalStatus, overallArray, fractionalGraphData);
 
 }
 
