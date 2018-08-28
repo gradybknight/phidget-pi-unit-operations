@@ -162,9 +162,8 @@ router.route('/fractionalsummary')
 
   router.route('/checkfractionaltemperature')
   .get((req,res) => {
-    console.log('front end asked for fractional temperature');
-    console.log(fractionalControlSystem);
     let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
+    console.log(`front end asked for fractional temperature. Returning ${fractionalTemp}`);
     res.json({
       fractionalTemp:fractionalTemp
     });
