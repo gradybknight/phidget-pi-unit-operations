@@ -35,7 +35,14 @@ let serverRunOverview = {
   startVolume: 0,
   currentMessage:'not running'
 };
-let fractionalControlSystem = {};
+let fractionalControlSystem = {
+          heatingElement:'',
+          solenoid:'',
+          retractArm:'',
+          extendArm:'',
+          tempProbe:''
+};
+
 
 // ***********************************************   Phidget Board Initialization ************************************
 console.log('Phidget connecting');
