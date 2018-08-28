@@ -1,6 +1,7 @@
 function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, serverRunOverview, fractionalControlSystem) {
     let overallArray = [];
     let tempLoggingTimer = setInterval(logTemperature(fractionalControlSystem, fractionalGraphData), 5000);
+    let startTime = Date.now();
     function buildOuterArray(serverRunOverview) {
         let numberOfCycles = Math.floor(serverRunOverview.startAlcohol * serverRunOverview.startVolume);
         for (let i=0; i<numberOfCycles; i++) {
