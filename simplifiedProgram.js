@@ -49,7 +49,7 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
         let dataPoint = {}
         dataPoint.y = fractionalTemp;
         dataPoint.x = Date.now() - startTime;
-        datapoint.id = Date.now();
+        dataPoint.id = Date.now();
         fractionalGraphData.push(dataPoint);
         console.log(`Pushed temperature: ${fractionalTemp} to array at ${Date.now()}`);
     }
