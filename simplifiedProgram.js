@@ -2,6 +2,7 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
     let overallArray = [];
     let startTime = Date.now();
 
+    let serverFractionalStatusLocal = serverFractionalStatus;
     let fractionalGraphDataLocal = fractionalGraphData;
     let serverRunOverviewLocal = serverRunOverview;
     let fractionalControlSystemLocal = fractionalControlSystem;
