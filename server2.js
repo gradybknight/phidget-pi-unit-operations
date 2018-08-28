@@ -189,11 +189,27 @@ router.route('/simplifiedprogram')
     });
   })
 
-router.route('/startfracheat')
+router.route('/retractarm')
   .get((req,res) => {
-    fractionalControlSystem.heatingElement.setState(true);
+    fractionalControlSystem.extendArm.setState(false);
+    fractionalControlSystem.retractArm.setState(true);
+    setTimeout(() => {
+      fractionalControlSystem.retractArm.setState(false)
+    }, 10000);
     res.json({
-      message:'started heating'
+      message:'retracting'
+    });
+  })
+
+router.route('/extendarm')
+  .get((req,res) => {
+    fractionalControlSystem.retractArm.setState(false);
+    fractionalControlSystem.extendArm.setState(true);
+    setTimeout(() => {
+      fractionalControlSystem.extendArm.setState(false)
+    }, 10000);
+    res.json({
+      message:'extending'
     });
   })
 
