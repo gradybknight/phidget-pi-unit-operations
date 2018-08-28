@@ -41,47 +41,54 @@ console.log('Phidget connecting');
 var SERVER_PORT = 5661;
 var hostName = '127.0.0.1';
 var conn = new phidget22.Connection(SERVER_PORT, hostName, { name: 'Server Connection', passwd: '' });
-conn.connect()
+conn.connect(fractionalControlSystem)
   .then(initializePhidgetBoards(fractionalControlSystem))
   .catch(function (err) {
     console.error('Error connecting to phidget:', err.message);
     process.exit(1);
   });
 
-async function initializePhidgetBoards(fractionalControlSystem) {
+async function initializePhidgetBoards( fractionalControlSystem) {
   let heatingElement = new phidget22.DigitalOutput();
   heatingElement.setChannel(0);
   await heatingElement.open();
+  fractionalControlSystem.heatingElement = heatingElement;
   console.log('heating element attached');
 
   let solenoid = new phidget22.DigitalOutput();
   solenoid.setChannel(1);
   await solenoid.open();
+  fractionalControlSystem.solenoid = solenoid;
   console.log('solenoid attached');
 
   let extendArm = new phidget22.DigitalOutput();
   extendArm.setChannel(2);
   await extendArm.open();
+  fractionalControlSystem.extendArm = extendArm;
   console.log('arm extender attached');
 
   let retractArm = new phidget22.DigitalOutput();
   retractArm.setChannel(3);
   await retractArm.open();
+  fractionalControlSystem.retractArm = retractArm;
   console.log('arm retractor attached');
 
   var tempProbe = new phidget22.TemperatureSensor();
   tempProbe.setChannel(0);
   tempProbe.setDataInterval(500);
   await tempProbe.open();
+  fractionalControlSystem.tempProbe = tempProbe;
   console.log('temp probe attached');
+  console.log('inside initialize phidget:');
+  console.log(fractionalControlSystem);
 
-  fractionalControlSystem = {
-      heatingElement:heatingElement,
-      solenoid:solenoid,
-      extendArm:extendArm,
-      retractArm:retractArm,
-      tempProbe:tempProbe
-  };
+  // fractionalControlSystem = {
+  //     heatingElement:heatingElement,
+  //     solenoid:solenoid,
+  //     extendArm:extendArm,
+  //     retractArm:retractArm,
+  //     tempProbe:tempProbe
+  // };
   console.log(`Fractional still control system established`);
   return true;
 }
