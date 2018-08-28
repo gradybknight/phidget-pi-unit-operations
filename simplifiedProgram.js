@@ -21,7 +21,7 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
         function endOpenValve() {
             fractionalControlSystem.solenoid.setState(false);
             console.log('closed valve');
-            setTimeout(waitUntilNextCycle, fractionInformation.closeTime);
+            setTimeout(waitUntilNextCycle, 4000);
         };
         function waitUntilNextCycle() {
             counter++;
@@ -30,6 +30,8 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
             if (counter < overallArray.length) {
                 runOneCycle();
             } else {
+                console.log('testing that i can see overall array:');
+                console.log(overallArray);
                 fractionalControlSystem.solenoid.setState(false);
                 fractionalControlSystem.heatingElement.setState(false);
                 console.log(`Finished Run at ${Date.now()}`);
@@ -42,7 +44,7 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
     };
     function waitTwoMinutesAfterPreHeat(fractionalControlSystem, serverRunOverview, overallArray, fractionalGraphData) {
         let twoMinutes = 2 * 60 * 1000;
-        setTimeout(processOverallArray(fractionalControlSystem, serverRunOverview, overallArray, fractionalGraphData), twoMinutes)
+        setTimeout( () => processOverallArray(fractionalControlSystem, serverRunOverview, overallArray, fractionalGraphData), twoMinutes)
     };
     function logTemperature(fractionalControlSystem, fractionalGraphData, startTime) {
         let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
