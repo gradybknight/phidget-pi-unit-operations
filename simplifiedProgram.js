@@ -53,7 +53,7 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
         fractionalGraphData.push(dataPoint);
         console.log(`Pushed temperature: ${fractionalTemp} to array at ${Date.now()}`);
     }
-    let tempLoggingTimer = setInterval(logTemperature(fractionalControlSystem, fractionalGraphData, startTime), 5000);
+    let tempLoggingTimer = setInterval( () => logTemperature(fractionalControlSystem, fractionalGraphData, startTime), 5000);
     console.log(`starting run now: ${Date.now()}`);
     buildOuterArray(serverRunOverview);
     console.log(`Outer Array: `);
