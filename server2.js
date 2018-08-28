@@ -176,6 +176,16 @@ router.route('/checkfractionaltemperature')
     });
   })
 
+router.route('/turnonheat')
+  .get((req,res) => {
+    let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
+    fractionalControlSystem.heatingElement.setState(true);
+    console.log(`turning on heat`);
+    res.json({
+      fractionalTemp:fractionalTemp
+    });
+  })
+
 // ***********************************************   Phidget Test Routes   ****************************************
 router.route('/simplifiedprogram')
   .get((req,res) => {

@@ -124,7 +124,32 @@ function startFractionalRun(fractionalGraphData, serverFractionalStatus, serverR
         }
     };
 
+    function logTemperature() {
+        let fractionalTemp = fractionalControlSystemLocal.tempProbe.getTemperature();
+        let dataPoint = {}
+        dataPoint.y = fractionalTemp;
+        dataPoint.x = Date.now() - startTime;
+        dataPoint.id = Date.now();
+        fractionalGraphDataLocal.push(dataPoint);
+    }
+
+    console.log(`Retracting arm for 30 seconds`);
+    moveArmForTime(30000,'retract');
+
     overallRunArray = buildDataForRun(serverRunOverview);
+    console.log(`Built the following beaker array:`);
+    console.log(overallRunArray);
+
+    console.log(`Initiating Temperature logging`);
+    let startingTemperature = fractionalControlSystemLocal.tempProbe.getTemperature();
+    console.log(`Starting Temperature is ${startingTemperature}`)
+    let temperatureLogInterval = setInterval(logTemperature, 60*1000);
+    
+    fractionalControlSystemLocal.heatingElement.setState(true);
+    console.log(`Heating element turned on`);
+
+
+
 
 }
 
@@ -137,59 +162,6 @@ startFractionalRun =  function(fractionalGraphData, serverFractionalStatus, serv
     let startTime = Date.now();
     initializePhidgetConnection();    
 };
-
-
-initializePhidgetConnection = function() {
-    var SERVER_PORT = 5661;
-    var hostname = '127.0.0.1';
-    console.log('connecting to:' + hostname);
-	var conn = new phidget22.Connection(SERVER_PORT, hostname, { name: 'Server Connection', passwd: '' });
-	conn.connect()
-		.then(runCoreFractionalProgram)
-		.catch(function (err) {
-			console.error('Error running example:', err.message);
-			process.exit(1);
-		});
-};
-
-function runCoreFractionalProgram() {
-    initializePhidgetBoards().then( (controlSystem) => { runFracProcess( controlSystem ) });
-};
-
-async function initializePhidgetBoards() {
-    let heatingElement = new phidget22.DigitalOutput();
-    heatingElement.setChannel(0);
-    await heatingElement.open();
-
-    let solenoid = new phidget22.DigitalOutput();
-    solenoid.setChannel(1);
-    await solenoid.open();
-
-    let extendArm = new phidget22.DigitalOutput();
-    extendArm.setChannel(2);
-    await extendArm.open();
-
-    let retractArm = new phidget22.DigitalOutput();
-    retractArm.setChannel(3);
-    await retractArm.open();
-
-
-    var tempProbe = new phidget22.TemperatureSensor();
-    tempProbe.setChannel(0);
-    tempProbe.setDataInterval(500);
-    await tempProbe.open();
-    console.log('temp probe attached');
-    
-
-    let phidgetBoardMapping = {
-        heatingElement:heatingElement,
-        solenoid:solenoid,
-        extendArm:extendArm,
-        retractArm:retractArm,
-        tempProbe:tempProbe
-    }
-    return phidgetBoardMapping;
-}
 
 
 
@@ -218,14 +190,6 @@ function runFracProcess(controlSystem) {
         }
     }, 1*60*1000);
     // 
-}
-
-function logTimePoint(temperature) {
-    let dataPoint = {}
-    dataPoint.y = temperature;
-    dataPoint.x = Date.now() - startTime;
-    datapoint.id = Date.now();
-    fractionalGraphData.push(dataPoint);
 }
 
 function runEnclosingArrayCycle(fractionInformation) {
