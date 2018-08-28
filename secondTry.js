@@ -4,15 +4,129 @@
 // serverRunOverview: object {currentBeaker, currentClickCountInBeaker, totalClickCountInBeaker, 
 //                            timeToCompleteBeaker, timeToCompleteRun, startAlcohol, startVolume, currentMessage}. 
 
-
-// import phidget library
-const phidget22 = require('phidget22');
-
 // physical parameters and relay mapping
 const collectionCoefficient = 1.75;
 const lastFractionForHeads = 6;
 const lastFractionForHearts = 16;
 const preHeatEndTemperature = 45;
+
+function startFractionalRun(fractionalGraphData, serverFractionalStatus, serverRunOverview, fractionalControlSystem) {
+    let startTime = Date.now();
+
+    let serverFractionalStatusLocal = serverFractionalStatus;
+    let fractionalGraphDataLocal = fractionalGraphData;
+    let serverRunOverviewLocal = serverRunOverview;
+    let fractionalControlSystemLocal = fractionalControlSystem;
+    let overallRunArray = [];
+
+    convertAlcoholToDecimal = function() {
+        serverRunOverviewLocal.startAlcohol = parseFloat(serverRunOverviewLocal.startAlcohol);
+        if (serverRunOverviewLocal.startAlcohol > 1) {
+            serverRunOverviewLocal.startAlcohol = serverRunOverviewLocal.startAlcohol / 100;
+        } else if (serverRunOverviewLocal.startAlcohol <= 0) {
+            return false;
+        }
+        return true;
+    };
+    
+    convertVolumeToDecimal = function() {
+        serverRunOverviewLocal.startVolume = parseFloat(serverRunOverviewLocal.startVolume)*1000;
+        if (serverRunOverviewLocal.startVolume <= 0) {
+            return false;
+        }
+        return true; 
+    };
+
+    moveArmForTime = function(moveTimeInMilliseconds, direction) {
+        if (direction == 'extend') {
+            fractionalControlSystemLocal.retractArm.setState(false);
+            fractionalControlSystemLocal.extendArm.setState(true);
+            setTimeout( () => {
+                fractionalControlSystemLocal.extendArm.setState(false) 
+            }, moveTimeInMilliseconds);
+        } else {
+            fractionalControlSystemLocal.extendArm.setState(false);
+            fractionalControlSystemLocal.retractArm.setState(true);
+            setTimeout( () => {
+                fractionalControlSystemLocal.retractArm.setState(false) 
+            }, moveTimeInMilliseconds);
+        }
+    };
+
+    buildOverallRunArray = function() {
+        let volumeEthanol = serverRunOverviewLocal.startAlcohol * serverRunOverviewLocal.startVolume;
+        let volumeMethanol = volumeEthanol * 0.03;
+        let volumeHeads = volumeEthanol * 0.05;
+        let volumeTails = volumeEthanol * 0.05;
+        let volumeHearts = volumeEthanol - (volumeMethanol + volumeTails + volumeHeads);
+        let beakerArray = [];
+    
+        // build target volumes for each beaker
+        for (let i = 0; i<21; i++) {
+            let beakerInformation = {
+                targetVolume:0,
+                cycleCount:0,
+                closeTime:0
+            };
+            if (i==0) {
+                // methanol
+                beakerInformation.targetVolume = volumeMethanol;
+                beakerInformation.overallFraction = 'Heads';
+            }  
+            if (i>0 && i<=4) {
+                // heads
+                beakerInformation.targetVolume = volumeHeads * collectionCoefficient / 3;               
+                beakerInformation.overallFraction = 'Heads';
+            } 
+            if (i>4 && i<=17) {
+                // hearts
+                beakerInformation.targetVolume = volumeHearts * collectionCoefficient / 14;               
+                beakerInformation.overallFraction = 'Hearts';
+            } 
+            if (i>17) {
+                // tails
+                beakerInformation.targetVolume = volumeTails * collectionCoefficient / 3;               
+                beakerInformation.overallFraction = 'Tails';
+            }
+            beakerInformation.beakerID=i;
+            beakerArray[i]= beakerInformation; 
+        }
+    
+        for (let i = 0; i<21; i++) {
+            let clickCount = Math.floor(beakerArray[i].targetVolume / 3.32);
+            beakerArray[i].cycleCount = clickCount;
+            if (i<=4) {
+                beakerArray[i].closeTime = 3000
+            } else if (i<=10) {
+                beakerArray[i].closeTime = 4000
+            } else if (i<=15) {
+                beakerArray[i].closeTime = 6000
+            } else {
+                beakerArray[i].closeTime = 8000
+            }
+        }
+
+        // move arm after beakers
+        beakerArray[lastFractionForHeads].nextFunction = () => { moveArmForTime(9000, 'extend') };
+        beakerArray[lastFractionForHearts].nextFunction = () => { moveArmForTime(11000, 'extend') };
+        return beakerArray;
+    };
+
+    buildDataForRun = function() {
+        console.log(serverRunOverviewLocal);
+        if (convertAlcoholToDecimal(serverRunOverviewLocal) && convertVolumeToDecimal(serverRunOverviewLocal)) {
+            // build overall run array
+            let overallRunArray = buildOverallRunArray(serverRunOverviewLocal);
+            // update total projected run time
+            console.log(serverRunOverviewLocal);
+        } else {
+            console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`);
+        }
+    };
+
+    overallRunArray = buildDataForRun(serverRunOverview);
+
+}
 
 startFractionalRun =  function(fractionalGraphData, serverFractionalStatus, serverRunOverview) {
     console.log('started frac in secondTry.js')
@@ -77,20 +191,7 @@ async function initializePhidgetBoards() {
     return phidgetBoardMapping;
 }
 
-buildDataForRun = function(serverRunOverview) {
-    console.log(serverRunOverview);
-    if (this.convertAlcoholToDecimal(serverRunOverview) && this.convertVolumeToDecimal(serverRunOverview)) {
-        // build overall run array
-        // each element of array: {closeTime, targetVolume, beakerID, cycleCount}
-        let overallRunArray = this.buildOverallRunArray(serverRunOverview);
-        // update total projected run time
-        this.updateExpectedTotalRunTime(overallRunArray, serverRunOverview);
-        console.log(serverRunOverview);
-        return overallRunArray;
-    } else {
-        console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverview.startAlcohol}, volume: ${serverRunOverview.startVolume}`);
-    }
-};
+
 
 function runFracProcess(controlSystem) {
     // pre-heat system
@@ -209,62 +310,7 @@ convertVolumeToDecimal = function(serverRunOverview) {
     return true; 
 };
 
-buildOverallRunArray = function(serverRunOverview) {
-    let volumeEthanol = serverRunOverview.startAlcohol * serverRunOverview.startVolume;
-    let volumeMethanol = volumeEthanol * 0.03;
-    let volumeHeads = volumeEthanol * 0.05;
-    let volumeTails = volumeEthanol * 0.05;
-    let volumeHearts = volumeEthanol - (volumeMethanol + volumeTails + volumeHeads);
-    let beakerArray = [];
 
-    // build target volumes for each beaker
-    for (let i = 0; i<21; i++) {
-        let beakerInformation = {
-            targetVolume:0,
-            cycleCount:0,
-            closeTime:0
-        };
-        if (i==0) {
-            // methanol
-            beakerInformation.targetVolume = volumeMethanol;
-            beakerInformation.overallFraction = 'Heads';
-        }  
-        if (i>0 && i<=4) {
-            // heads
-            beakerInformation.targetVolume = volumeHeads * collectionCoefficient / 3;               
-            beakerInformation.overallFraction = 'Heads';
-        } 
-        if (i>4 && i<=17) {
-            // hearts
-            beakerInformation.targetVolume = volumeHearts * collectionCoefficient / 14;               
-            beakerInformation.overallFraction = 'Hearts';
-        } 
-        if (i>17) {
-            // tails
-            beakerInformation.targetVolume = volumeTails * collectionCoefficient / 3;               
-            beakerInformation.overallFraction = 'Tails';
-        }
-        beakerInformation.beakerID=i;
-        beakerArray[i]= beakerInformation; 
-    }
-
-    for (let i = 0; i<21; i++) {
-        let clickCount = Math.floor(beakerArray[i].targetVolume / 3.32);
-        beakerArray[i].cycleCount = clickCount;
-        if (i<=4) {
-            beakerArray[i].closeTime = 3000
-        } else if (i<=10) {
-            beakerArray[i].closeTime = 4000
-        } else if (i<=15) {
-            beakerArray[i].closeTime = 6000
-        } else {
-            beakerArray[i].closeTime = 8000
-        }
-    }
-    // beakerArray[lastFractionForHeads].nextFunction = this.moveArm("extend", 9000);
-    // beakerArray[lastFractionForHearts].nextFunction = this.moveArm("extend", 11000);
-    return beakerArray;
-};
 
 moveArm = function(direction, duration) {
     if (direction == 'extend') {

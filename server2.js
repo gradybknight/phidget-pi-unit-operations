@@ -213,6 +213,12 @@ router.route('/extendarm')
     });
   })
 
+router.route('*')
+  .get((req,res) => {
+    var userIP = req.socket.remoteAddress;
+    console.log(userIP);
+    res.status(404);
+  })
 // ***********************************************   Start API server   ****************************************
 app.listen(PORT, function() {
   console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
