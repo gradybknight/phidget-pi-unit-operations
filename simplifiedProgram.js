@@ -11,6 +11,7 @@ function startSimplifiedProgram(fractionalGraphData, serverFractionalStatus, ser
         };
     };
     function processOverallArray(fractionalControlSystem, serverRunOverview, overallArray){
+        console.log(serverRunOverview);
         let counter = 0;
         function runOneCycle() {
             fractionalControlSystem.solenoid.setState(true);
