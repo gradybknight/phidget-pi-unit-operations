@@ -7,6 +7,7 @@ const phidget22 = require('phidget22');
 
 // ***********************************************   Module Imports   ***********************************************
 const fractionalStill = require('./secondTry');
+const simplifiedProgram = require('./simplifiedProgram');
 
 // ***********************************************   Express Server Setup   ***********************************************
 const PORT = 3001;
@@ -94,6 +95,7 @@ async function initializePhidgetBoards( fractionalControlSystem) {
 }
 
 // ***********************************************   Routes   ********************************************************
+
 // ***********************************************   Pot Still Routes   **********************************************
 router.route('/setpot')
   .post((req,res) => {
@@ -160,7 +162,7 @@ router.route('/fractionalsummary')
     });
   })
 
-  router.route('/checkfractionaltemperature')
+router.route('/checkfractionaltemperature')
   .get((req,res) => {
     let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
     console.log(`front end asked for fractional temperature. Returning ${fractionalTemp}`);
@@ -169,6 +171,18 @@ router.route('/fractionalsummary')
     });
   })
 
+// ***********************************************   Phidget Test Routes   ****************************************
+router.route('/simplifiedprogram')
+  .get((req,res) => {
+    serverRunOverview.startAlcohol=.3;
+    serverRunOverview.startVolume=38.8;
+    serverFractionalStatus=req.body.desiredFractionalState;
+    fractionalGraphData=[];
+    simplifiedProgram.startSimplifiedProgram(fractionalGraphData,serverFractionalStatus,serverRunOverview,fractionalControlSystem);
+    res.json({
+      fractionalTemp:fractionalTemp
+    });
+  })
 
 // ***********************************************   Start API server   ****************************************
 app.listen(PORT, function() {
