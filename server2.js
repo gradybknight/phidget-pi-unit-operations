@@ -182,6 +182,14 @@ router.route('/simplifiedprogram')
     });
   })
 
+router.route('/startfracheat')
+  .get((req,res) => {
+    fractionalControlSystem.heatingElement.setState(true);
+    res.json({
+      message:'started heating'
+    });
+  })
+
 // ***********************************************   Start API server   ****************************************
 app.listen(PORT, function() {
   console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
