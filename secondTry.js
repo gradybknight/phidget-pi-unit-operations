@@ -108,7 +108,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         // move arm after beakers
         beakerArray[lastFractionForHeads].nextFunction = () => { moveArmForTime(9000, 'extend') };
         beakerArray[lastFractionForHearts].nextFunction = () => { moveArmForTime(11000, 'extend') };
-        conosole.log('internal beaker array - line 111:');
+        conosle.log('internal beaker array - line 111:');
         console.log(beakerArray);
         return beakerArray;
     };
