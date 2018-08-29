@@ -30,6 +30,7 @@ let serverRunOverview = {
   totalClickCountInBeaker:'',
   timeToCompleteBeaker:'',
   timeToCompleteRun: '',
+  timeStarted:'',
   startAlcohol: 0,
   startVolume: 0,
   running:false,

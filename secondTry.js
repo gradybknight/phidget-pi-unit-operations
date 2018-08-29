@@ -119,16 +119,9 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     };
 
     function buildDataForRun() {
-        console.log(`inside buildDataForRun - line 117`);
-        console.log(serverRunOverviewLocal);
-        console.log(`Line 123: overall array`);
-        console.log(overallRunArray);
         if (convertAlcoholToDecimal(serverRunOverviewLocal) && convertVolumeToDecimal(serverRunOverviewLocal)) {
             // build overall run array
-            console.log(`calling buildOverallRunArray from line 127`);
             buildOverallRunArray(serverRunOverviewLocal);
-            console.log('Line 129 overall run array');
-            console.log(overallRunArray);
         } else {
             console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`);
             serverRunOverviewLocal.message = `bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`;
