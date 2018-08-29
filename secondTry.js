@@ -16,6 +16,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     let serverRunOverviewLocal = serverRunOverview;
     let fractionalControlSystemLocal = fractionalControlSystem;
     let overallRunArray = [];
+    let positionInOverallArray=0;
 
     convertAlcoholToDecimal = function() {
         serverRunOverviewLocal.startAlcohol = parseFloat(serverRunOverviewLocal.startAlcohol);
@@ -141,6 +142,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         dataPoint.x = Date.now() - startTime;
         dataPoint.id = Date.now();
         fractionalGraphDataLocal.push(dataPoint);
+        serverRunOverviewLocal.currentTemperature = fractionalControlSystem;
     }
 
     function updateExpectedTotalRunTime() {

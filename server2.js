@@ -32,8 +32,8 @@ let serverRunOverview = {
   timeToCompleteRun: '',
   startAlcohol: 0,
   startVolume: 0,
-  currentMessage:'not running',
-  running:false
+  running:false,
+  currentTemperature:0
 };
 let fractionalControlSystem = {
           heatingElement:'',
