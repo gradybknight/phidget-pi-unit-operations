@@ -23,7 +23,6 @@ let serverPotStatus = false;
 let serverGraphData = [];
 
 // ***********************************************   Fractional Still Variables   ************************************
-let serverFractionalStatus = false;
 let fractionalGraphData = [];
 let serverRunOverview = {
   currentBeaker:'',
@@ -33,7 +32,8 @@ let serverRunOverview = {
   timeToCompleteRun: '',
   startAlcohol: 0,
   startVolume: 0,
-  currentMessage:'not running'
+  currentMessage:'not running',
+  running:false;
 };
 let fractionalControlSystem = {
           heatingElement:'',
@@ -145,9 +145,9 @@ router.route('/setfractional')
 router.route('/fractionalstatus')
   .get((req,res) => {
     console.log('front end asked what is the pot status')
-    console.log(`server status is ${serverFractionalStatus}`);
+    console.log(`server status is ${serverRunOverview.running}`);
     res.json({
-      serverFractionalStatus:serverFractionalStatus
+      serverFractionalStatus:serverRunOverview.running
     });
   })
 
@@ -181,6 +181,16 @@ router.route('/turnonheat')
     let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
     fractionalControlSystem.heatingElement.setState(true);
     console.log(`turning on heat`);
+    res.json({
+      fractionalTemp:fractionalTemp
+    });
+  })
+
+router.route('/turnoffheat')
+  .get((req,res) => {
+    let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
+    fractionalControlSystem.heatingElement.setState(false);
+    console.log(`turning off heat`);
     res.json({
       fractionalTemp:fractionalTemp
     });

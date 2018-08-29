@@ -1,19 +1,17 @@
 // This module receives:
 // fractionalGraphData: array where each object is: x (elapsed time in seconds), y (temperature), id (Date.now() to use as identifier)
-// serverFractionalStatus: boolean to indicate running or not
 // serverRunOverview: object {currentBeaker, currentClickCountInBeaker, totalClickCountInBeaker, 
-//                            timeToCompleteBeaker, timeToCompleteRun, startAlcohol, startVolume, currentMessage}. 
+//                            timeToCompleteBeaker, timeToCompleteRun, startAlcohol, startVolume, message, running}. 
 
-// physical parameters and relay mapping
-const collectionCoefficient = 1.75;
-const lastFractionForHeads = 6;
-const lastFractionForHearts = 16;
-const preHeatEndTemperature = 45;
 
-function startFractionalRun(fractionalGraphData, serverFractionalStatus, serverRunOverview, fractionalControlSystem) {
+function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalControlSystem) {
+    // physical parameters and relay mapping
+    const collectionCoefficient = 1.75;
+    const lastFractionForHeads = 6;
+    const lastFractionForHearts = 16;
+    const preHeatEndTemperature = 45;
+
     let startTime = Date.now();
-
-    let serverFractionalStatusLocal = serverFractionalStatus;
     let fractionalGraphDataLocal = fractionalGraphData;
     let serverRunOverviewLocal = serverRunOverview;
     let fractionalControlSystemLocal = fractionalControlSystem;
@@ -121,6 +119,7 @@ function startFractionalRun(fractionalGraphData, serverFractionalStatus, serverR
             console.log(serverRunOverviewLocal);
         } else {
             console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`);
+            serverRunOverviewLocal.message = `bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`;
         }
     };
 
@@ -133,157 +132,135 @@ function startFractionalRun(fractionalGraphData, serverFractionalStatus, serverR
         fractionalGraphDataLocal.push(dataPoint);
     }
 
+    updateExpectedTotalRunTime = function() {
+        let totalTime = 0;
+        for (let i= 0; i<overallRunArray.length; i++) {
+            let beakerTime = (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
+            totalTime = totalTime + beakerTime;
+        }
+        serverRunOverviewLocal.timeToCompleteRun = totalTime + Date.now();
+    };
+
+    function endFractionalRun() {
+        function closeSoleniod() {
+            fractionalControlSystemLocal.solenoid.setState(false);
+            console.log(`Completed at ${Date.now()}. Solenoid is now closed`)
+            serverRunOverviewLocal.message = `Run completed at ${Date.now()}`;
+            clearInterval(temperatureLogInterval);
+        }
+
+        fractionalControlSystemLocal.heatingElement.setState(false);
+        fractionalControlSystemLocal.solenoid.setState(true);
+        console.log(`Heating element off, solenoid open`)
+        setTimeout(() => {
+            closeSoleniod();
+        }, 5*60*1000);
+    }
+
+    // This is the core logic.  It opens the solenoid valve for 0.5 seconds and closes for the time designated by each element of the array
+    // After reaching the end of the array, heat is discontinued, we empty the still by opening the solenid for five minutes
+    function runEnclosingArrayCycle(fractionInformation) {
+        // recursive function.  Terminates when end of array is met
+        let fractionCounter = 0;
+    
+        function runOneCycle() {
+            fractionalControlSystemLocal.solenoid.setState(true);
+            setTimeout(endOpenValve, 500);
+        };
+        
+        function endOpenValve() {
+            fractionalControlSystemLocal.solenoid.setState(false);
+            setTimeout(waitUntilNextCycle, fractionInformation.closeTime);
+        };
+    
+        function waitUntilNextCycle() {
+            fractionCounter++;
+            serverRunOverviewLocal.currentClickCountInBeaker=fractionCounter;
+            
+            // Breakpoint for cycles within one beaker
+            if (fractionCounter < fractionInformation.cycleCount) {
+                runOneCycle();
+            } else {
+                // move to next beaker in overall array                
+                positionInOverallArray++;
+                console.log(`moving to next beaker ${positionInOverallArray}`);
+                // if the current beaker has a next function, run it.  Currently used to move actuator arm
+                if (fractionInformation.nextFunction) {
+                    // run end of fraction function; currently only used to move actuator arm
+                    fractionInformation.nextFunction();
+                    console.log(`moved actuator arm`);
+                } 
+                // if there's another beaker in array, run its cycle
+                if (positionInOverallArray<overallRunArray.length) {
+                    serverRunOverviewLocal.currentBeaker = positionInOverallArray;
+                    serverRunOverviewLocal.totalClickCountInBeaker = overallRunArray[positionInOverallArray].cycleCount;
+                    serverRunOverviewLocal.message = overallRunArray[positionInOverallArray].overallFraction;
+                    // move to next line in overall array
+                    runEnclosingArrayCycle(overallRunArray[positionInOverallArray]);
+                } else {
+                    // end the run
+                    console.log(`Last beaker reached, moving to run termination`);
+                    serverRunOverview.message = `Last beaker completed, emptying the still`;
+                    endFractionalRun();
+                    serverFractionalStatus = false;
+                }
+            }
+        };
+        runOneCycle(); // one cycle opens solenoid for 500 ms; closes for beaker's close time
+    }
+
+
+    // **********************************  Main program ********************************** //
+    
+    // Tell server that the program is running
+    serverRunOverviewLocal.running=true;
+
+    // Retract arm
     console.log(`Retracting arm for 30 seconds`);
     moveArmForTime(30000,'retract');
+    serverRunOverviewLocal.message = `Retracting arm`;
 
+    // Build array of beakers for recursive section to iterate through
     overallRunArray = buildDataForRun(serverRunOverview);
     console.log(`Built the following beaker array:`);
     console.log(overallRunArray);
 
+    // Update server with estimated time to complete
+    updateExpectedTotalRunTime();
+
+    // Turn on temperature logging
     console.log(`Initiating Temperature logging`);
     let startingTemperature = fractionalControlSystemLocal.tempProbe.getTemperature();
     console.log(`Starting Temperature is ${startingTemperature}`)
     let temperatureLogInterval = setInterval(logTemperature, 60*1000);
     
+    // Turn on heating element
     fractionalControlSystemLocal.heatingElement.setState(true);
     console.log(`Heating element turned on`);
+    serverRunOverviewLocal.message = `Pre-heating System`;
 
-
-
-
-}
-
-startFractionalRun =  function(fractionalGraphData, serverFractionalStatus, serverRunOverview) {
-    console.log('started frac in secondTry.js')
-    // build data for run
-    overallRunArray = buildDataForRun(serverRunOverview);
-    console.log(overallRunArray);
-    // initialize phidget connection
-    let startTime = Date.now();
-    initializePhidgetConnection();    
-};
-
-
-
-function runFracProcess(controlSystem) {
-    // pre-heat system
-    console.log(`got to line 95`);
-    controlSystem.heatingElement.setState(true);
-    serverFractionalStatus = true;
-    serverRunOverview.currentMessage = 'Pre-heating system';
-    
-    // loop until temperature endpoint is met then call enclosing array function
-    let preheatCheck = setInterval(() => {
-        let currentTemperature = controlSystem.tempProbe.getTemperature();
-        logTimePoint(currentTemperature);
+    // Monitor temperature until target pre-heat temperature is hit
+    console.log(`pre-heating system until temperature reaches ${preHeatEndTemperature}`);
+    let preheatCheck = setInterval( () => {
+        let currentTemperature = fractionalControlSystemLocal.tempProbe.getTemperature();
         if (currentTemperature > preHeatEndTemperature) {
-            serverRunOverview.currentMessage = 'Ten minute wait before processing';
+            // Wait ten minutes, stop monitoring temperature for pre-heat
+            serverRunOverviewLocal.message = 'Ten minute wait before processing';
             clearInterval(preheatCheck);
+
+            // After ten minute wait, recurse through beaker array, cycling solenoid
             setTimeout(() => {
                 updateExpectedTotalRunTime();
-                serverRunOverview.currentBeaker = 0;
-                serverRunOverview.totalClickCountInBeaker = overallRunArray[0].cycleCount;
-                serverRunOverview.message = overallRunArray[0].overallFraction;
+                serverRunOverviewLocal.currentBeaker = 0;
+                serverRunOverviewLocal.totalClickCountInBeaker = overallRunArray[0].cycleCount;
+                serverRunOverviewLocal.message = overallRunArray[0].overallFraction;
+                
                 // This starts the core fractional program.  Passes in first beaker's paramaters
                 runEnclosingArrayCycle(overallRunArray[0]);
             }, 10*60*1000);
         }
     }, 1*60*1000);
-    // 
-}
 
-function runEnclosingArrayCycle(fractionInformation) {
-    // recursive function.  Terminates when end of array is met
-
-    let fractionCounter = 0;
-
-    function runOneCycle() {
-        controlSystem.solenoid.setState(true);
-        setTimeout(endOpenValve, 500);
-    };
-    
-    function endOpenValve() {
-        controlSystem.solenoid.setState(false);
-        setTimeout(waitUntilNextCycle, fractionInformation.closeTime);
-    };
-
-    function waitUntilNextCycle() {
-        // console.log(`timestamp: ${Date.now()}: valve status: ${valveStatus}`);
-        fractionCounter++;
-        serverRunOverview.currentClickCountInBeaker=fractionCounter;
-        
-        // Log temperature every ten solenoid clicks        
-        if (fractionCounter % 10 == 0) {
-            logTimePoint(controlSystem.tempProbe.getTemperature());
-        }
-        // Breakpoint for cycles within one beaker
-        if (fractionCounter < fractionInformation.cycleCount) {
-            runOneCycle();
-        } else {
-            // move to next beaker in overall array
-            positionInOverallArray++;
-            // if the current beaker has a next function, run it.  Currently used to move actuator arm
-            if (fractionInformation.nextFunction) {
-                // run end of fraction function; usually move actuator arm
-                fractionInformation.nextFunction();
-                console.log(`moved actuator arm`);
-            } 
-            // if there's another beaker in array, run its cycle
-            if (positionInOverallArray<overallRunArray.length) {
-                serverRunOverview.currentBeaker = positionInOverallArray;
-                serverRunOverview.totalClickCountInBeaker = overallRunArray[positionInOverallArray].cycleCount;
-                serverRunOverview.message = overallRunArray[positionInOverallArray].overallFraction;
-                // move to next line in overall array
-                runEnclosingArrayCycle(overallRunArray[positionInOverallArray]);
-            } else {
-                // end the run
-                console.log(`Run has ended`);
-                serverRunOverview.message = `last run completed at ${Date.now()}`;
-                serverFractionalStatus = false;
-            }
-        }
-    };
-
-    runOneCycle(); // one cycle opens solenoid for 500 ms; closes for beaker's close time
-}
-
-updateExpectedTotalRunTime = function(overallRunArray, serverRunOverview) {
-    let totalTime = 0;
-    for (let i= 0; i<21; i++) {
-        let beakerTime = (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
-        totalTime = totalTime + beakerTime;
-    }
-    serverRunOverview.timeToCompleteRun = totalTime/1000 + Date.now();
-};
-
-convertAlcoholToDecimal = function(serverRunOverview) {
-    serverRunOverview.startAlcohol = parseFloat(serverRunOverview.startAlcohol);
-    if (serverRunOverview.startAlcohol > 1) {
-        serverRunOverview.startAlcohol = serverRunOverview.startAlcohol / 100;
-    } else if (serverRunOverview.startAlcohol <= 0) {
-        return false;
-    }
-    return true;
-};
-
-convertVolumeToDecimal = function(serverRunOverview) {
-    serverRunOverview.startVolume = parseFloat(serverRunOverview.startVolume)*1000;
-    if (serverRunOverview.startVolume <= 0) {
-        return false;
-    }
-    return true; 
-};
-
-
-
-moveArm = function(direction, duration) {
-    if (direction == 'extend') {
-        controlSystem.extendArm.setState(true);
-        setTimeout((controlSystem) => {controlSystem.extendArm.setState(false)},duration);
-    } else {
-        controlSystem.retractArm.setState(true);
-        setTimeout((controlSystem) => {controlSystem.retractArm.setState(false)},duration);
-    }
 };
 
 module.exports.startFractionalRun = startFractionalRun;
