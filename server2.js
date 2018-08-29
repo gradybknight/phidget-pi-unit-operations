@@ -203,7 +203,7 @@ router.route('/simplifiedprogram')
     serverRunOverview.startVolume=38.8;
     serverFractionalStatus=req.body.desiredFractionalState;
     fractionalGraphData=[];
-    simplifiedProgram.startSimplifiedProgram(fractionalGraphData,serverFractionalStatus,serverRunOverview,fractionalControlSystem);
+    fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
     res.json({
       message:'started simple program'
     });
