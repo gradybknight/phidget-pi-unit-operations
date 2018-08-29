@@ -242,8 +242,8 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
 
     // Retract arm
     console.log(`Retracting arm for 30 seconds`);
-    moveArmForTime(30000,'retract');
-    serverRunOverviewLocal.message = `Retracting arm`;
+    // moveArmForTime(30000,'retract');
+    // serverRunOverviewLocal.message = `Retracting arm`;
 
     // Build array of beakers for recursive section to iterate through
     buildDataForRun(serverRunOverviewLocal);
