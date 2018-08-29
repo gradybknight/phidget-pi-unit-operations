@@ -151,7 +151,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
             let beakerTime = (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
             totalTime = totalTime + beakerTime;
         }
-        serverRunOverviewLocal.timeToCompleteRun = totalTime + Date.now();
+        serverRunOverviewLocal.timeToCompleteRun = totalTime;
     };
 
     function endFractionalRun() {
@@ -227,6 +227,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     
     // Tell server that the program is running
     serverRunOverviewLocal.running=true;
+    serverRunOverviewLocal.timeStarted = timeStarted;
 
     // Retract arm
     console.log(`Retracting arm for 30 seconds`);
