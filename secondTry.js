@@ -227,7 +227,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     
     // Tell server that the program is running
     serverRunOverviewLocal.running=true;
-    serverRunOverviewLocal.timeStarted = timeStarted;
+    serverRunOverviewLocal.timeStarted = startTime;
 
     // Retract arm
     console.log(`Retracting arm for 30 seconds`);
