@@ -232,7 +232,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     serverRunOverviewLocal.message = `Retracting arm`;
 
     // Build array of beakers for recursive section to iterate through
-    overallRunArray = buildDataForRun(serverRunOverviewLocal);
+    buildDataForRun(serverRunOverviewLocal);
     console.log(`Built the following beaker array:`);
     console.log(overallRunArray);
 
