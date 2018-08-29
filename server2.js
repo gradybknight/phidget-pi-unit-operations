@@ -1,15 +1,14 @@
-// ***********************************************   Package Imports   ***********************************************
+// ***********************************************   Package Imports   ************************************************
 const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const router = express.Router();
 const phidget22 = require('phidget22');
 
-// ***********************************************   Module Imports   ***********************************************
+// ***********************************************   Unit Ops Module Imports   ****************************************
 const fractionalStill = require('./secondTry');
-const simplifiedProgram = require('./simplifiedProgram');
 
-// ***********************************************   Express Server Setup   ***********************************************
+// ***********************************************   Express Server Setup   *******************************************
 const PORT = 3001;
 const app = express();
 
@@ -34,7 +33,8 @@ let serverRunOverview = {
   startAlcohol: 0,
   startVolume: 0,
   running:false,
-  currentTemperature:0
+  currentTemperature:0,
+  startingBeaker:14
 };
 let fractionalControlSystem = {
           heatingElement:'',

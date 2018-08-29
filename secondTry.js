@@ -1,3 +1,9 @@
+// To Do:
+// 1. Add time estimate for overall fraction (e.g. heads / hearts / tails)
+// 2. Change message to an array --> push the current to array and peek on frontend
+// 3. Make message {timeStamp, message}
+
+
 // This module receives:
 // fractionalGraphData: array where each object is: x (elapsed time in seconds), y (temperature), id (Date.now() to use as identifier)
 // serverRunOverview: object {currentBeaker, currentClickCountInBeaker, totalClickCountInBeaker, 
@@ -7,7 +13,7 @@
 function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalControlSystem) {
     // physical parameters and relay mapping
     const collectionCoefficient = 1.75;
-    const lastFractionForHeads = 6;
+    const lastFractionForHeads = 5;
     const lastFractionForHearts = 16;
     const preHeatEndTemperature = 45;
 
@@ -16,7 +22,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     let serverRunOverviewLocal = serverRunOverview;
     let fractionalControlSystemLocal = fractionalControlSystem;
     let overallRunArray = [];
-    let positionInOverallArray=0;
+    let positionInOverallArray=serverRunOverviewLocal.startingBeaker;
 
     convertAlcoholToDecimal = function() {
         serverRunOverviewLocal.startAlcohol = parseFloat(serverRunOverviewLocal.startAlcohol);
@@ -71,17 +77,14 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
             if (i==0) {
                 // methanol
                 beakerInformation.targetVolume = volumeMethanol;
-                beakerInformation.overallFraction = 'Heads';
             }  
-            if (i>0 && i<=4) {
+            if (i>0 && i<4) {
                 // heads
                 beakerInformation.targetVolume = volumeHeads * collectionCoefficient / 3;               
-                beakerInformation.overallFraction = 'Heads';
             } 
-            if (i>4 && i<=17) {
+            if (i>=4 && i<=17) {
                 // hearts
                 beakerInformation.targetVolume = volumeHearts * collectionCoefficient / 14;               
-                beakerInformation.overallFraction = 'Hearts';
             } 
             if (i>17) {
                 // tails
@@ -105,6 +108,20 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
                 beakerArray[i].closeTime = 8000
             }
         }
+
+        for (let i = 0; i<21; i++) {
+            let clickCount = Math.floor(beakerArray[i].targetVolume / 3.32);
+            beakerArray[i].cycleCount = clickCount;
+            if (i<=lastFractionForHeads) {
+                beakerInformation.overallFraction = 'Heads';
+            } else if (i<=lastFractionForHearts) {
+                beakerInformation.overallFraction = 'Hearts';
+            } else {
+                beakerInformation.overallFraction = 'Tails';
+            }
+        }
+
+        
 
         // move arm after beakers
         beakerArray[lastFractionForHeads].nextFunction = () => { moveArmForTime(9000, 'extend') };
@@ -201,6 +218,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
                     serverRunOverviewLocal.currentBeaker = positionInOverallArray;
                     serverRunOverviewLocal.totalClickCountInBeaker = overallRunArray[positionInOverallArray].cycleCount;
                     serverRunOverviewLocal.message = overallRunArray[positionInOverallArray].overallFraction;
+                    serverRunOverviewLocal.timeToCompleteBeaker = overallRunArray[positionInOverallArray].cycleCount * (0.5 + overallRunArray[positionInOverallArray].closeTime) / 1000;
                     // move to next line in overall array
                     runEnclosingArrayCycle(overallRunArray[positionInOverallArray]);
                 } else {
