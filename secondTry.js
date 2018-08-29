@@ -113,11 +113,11 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
             let clickCount = Math.floor(beakerArray[i].targetVolume / 3.32);
             beakerArray[i].cycleCount = clickCount;
             if (i<=lastFractionForHeads) {
-                beakerInformation.overallFraction = 'Heads';
+                beakerArray[i].overallFraction = 'Heads';
             } else if (i<=lastFractionForHearts) {
-                beakerInformation.overallFraction = 'Hearts';
+                beakerArray[i].overallFraction = 'Hearts';
             } else {
-                beakerInformation.overallFraction = 'Tails';
+                beakerArray[i].overallFraction = 'Tails';
             }
         }
 
