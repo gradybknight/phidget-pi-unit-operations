@@ -52,6 +52,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     };
 
     buildOverallRunArray = function() {
+        console.log(`Starting alcohol is ${serverRunOverviewLocal.startAlcohol} and volume ${serverRunOverviewLocal.startVolume}`);
         let volumeEthanol = serverRunOverviewLocal.startAlcohol * serverRunOverviewLocal.startVolume;
         let volumeMethanol = volumeEthanol * 0.03;
         let volumeHeads = volumeEthanol * 0.05;
@@ -107,14 +108,20 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         // move arm after beakers
         beakerArray[lastFractionForHeads].nextFunction = () => { moveArmForTime(9000, 'extend') };
         beakerArray[lastFractionForHearts].nextFunction = () => { moveArmForTime(11000, 'extend') };
+        conosole.log('internal beaker array - line 111:');
+        console.log(beakerArray);
         return beakerArray;
     };
 
     buildDataForRun = function() {
+        console.log(`inside buildDataForRun - line 114`);
         console.log(serverRunOverviewLocal);
         if (convertAlcoholToDecimal(serverRunOverviewLocal) && convertVolumeToDecimal(serverRunOverviewLocal)) {
             // build overall run array
+            console.log(`calling buildOverallRunArray in line 118`);
             overallRunArray = buildOverallRunArray(serverRunOverviewLocal);
+            console.log('returned array - line 123:');
+            console.log(overallRunArray);
         } else {
             console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`);
             serverRunOverviewLocal.message = `bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`;
