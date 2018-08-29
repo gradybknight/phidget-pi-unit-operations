@@ -135,7 +135,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         dataPoint.x = Date.now() - startTime;
         dataPoint.id = Date.now();
         fractionalGraphDataLocal.push(dataPoint);
-        serverRunOverviewLocal.currentTemperature = fractionalControlSystem;
+        serverRunOverviewLocal.currentTemperature = fractionalTemp;
     }
 
     function updateExpectedTotalRunTime() {
