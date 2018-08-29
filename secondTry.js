@@ -114,9 +114,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         console.log(serverRunOverviewLocal);
         if (convertAlcoholToDecimal(serverRunOverviewLocal) && convertVolumeToDecimal(serverRunOverviewLocal)) {
             // build overall run array
-            let overallRunArray = buildOverallRunArray(serverRunOverviewLocal);
-            // update total projected run time
-            console.log(serverRunOverviewLocal);
+            overallRunArray = buildOverallRunArray(serverRunOverviewLocal);
         } else {
             console.log(`bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`);
             serverRunOverviewLocal.message = `bad volume or alcohol value was received. alcohol: ${serverRunOverviewLocal.startAlcohol}, volume: ${serverRunOverviewLocal.startVolume}`;
@@ -221,7 +219,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     serverRunOverviewLocal.message = `Retracting arm`;
 
     // Build array of beakers for recursive section to iterate through
-    overallRunArray = buildDataForRun(serverRunOverview);
+    overallRunArray = buildDataForRun(serverRunOverviewLocal);
     console.log(`Built the following beaker array:`);
     console.log(overallRunArray);
 
