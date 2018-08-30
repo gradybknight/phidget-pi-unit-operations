@@ -35,7 +35,7 @@ let serverRunOverview = {
   startVolume: 0,
   running:false,
   currentTemperature:0,
-  startingBeaker:0,
+  // startingBeaker:0,
   message:''
 };
 let fractionalControlSystem = {

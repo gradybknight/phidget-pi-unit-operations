@@ -22,7 +22,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     let serverRunOverviewLocal = serverRunOverview;
     let fractionalControlSystemLocal = fractionalControlSystem;
     let overallRunArray = [];
-    let positionInOverallArray=serverRunOverviewLocal.startingBeaker;
+    let positionInOverallArray=0;
 
     convertAlcoholToDecimal = function() {
         serverRunOverviewLocal.startAlcohol = parseFloat(serverRunOverviewLocal.startAlcohol);
@@ -133,6 +133,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         };
         console.log(`Line 116 overall array:`);
         console.log(overallRunArray);
+        serverRunOverviewLocal.calculatedBeakerArray = overallRunArray;
     };
 
     function buildDataForRun() {
@@ -276,7 +277,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
 
             // After ten minute wait, recurse through beaker array, cycling solenoid
             setTimeout(() => {
-                updateExpectedTotalRunTime();
+                // updateExpectedTotalRunTime();
                 serverRunOverviewLocal.currentBeaker = 0;
                 serverRunOverviewLocal.totalClickCountInBeaker = overallRunArray[0].cycleCount;
                 serverRunOverviewLocal.message = overallRunArray[0].overallFraction;
