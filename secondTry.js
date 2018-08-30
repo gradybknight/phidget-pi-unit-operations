@@ -173,6 +173,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         }
 
         fractionalControlSystemLocal.heatingElement.setState(false);
+        serverRunOverviewLocal.message = `Heating element is turned off.  Waiting five minutes to drain still`;
         fractionalControlSystemLocal.solenoid.setState(true);
         console.log(`Heating element off, solenoid open`)
         setTimeout(() => {
@@ -242,8 +243,8 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
 
     // Retract arm
     console.log(`Retracting arm for 30 seconds`);
-    // moveArmForTime(30000,'retract');
-    // serverRunOverviewLocal.message = `Retracting arm`;
+    moveArmForTime(30000,'retract');
+    serverRunOverviewLocal.message = `Retracting arm`;
 
     // Build array of beakers for recursive section to iterate through
     buildDataForRun(serverRunOverviewLocal);

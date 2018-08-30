@@ -7,6 +7,7 @@ const phidget22 = require('phidget22');
 
 // ***********************************************   Unit Ops Module Imports   ****************************************
 const fractionalStill = require('./secondTry');
+const fractionalStillSingleInteraction = require('./fractionalstillinteractions');
 
 // ***********************************************   Express Server Setup   *******************************************
 const PORT = 3001;
@@ -34,7 +35,8 @@ let serverRunOverview = {
   startVolume: 0,
   running:false,
   currentTemperature:0,
-  startingBeaker:14
+  startingBeaker:0,
+  message:''
 };
 let fractionalControlSystem = {
           heatingElement:'',
@@ -168,34 +170,76 @@ router.route('/fractionalsummary')
     });
   })
 
-router.route('/checkfractionaltemperature')
+// router.route('/checkfractionaltemperature')
+//   .get((req,res) => {
+//     let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
+//     console.log(`front end asked for fractional temperature. Returning ${fractionalTemp}`);
+//     res.json({
+//       fractionalTemp:fractionalTemp
+//     });
+//   })
+
+router.route('/extendarm')
   .get((req,res) => {
-    let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
-    console.log(`front end asked for fractional temperature. Returning ${fractionalTemp}`);
+    let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'extendArm');
+    console.log(`turning on heat`);
     res.json({
-      fractionalTemp:fractionalTemp
+      message:confirmationMessage
     });
   })
 
-router.route('/turnonheat')
+router.route('/retractarm')
   .get((req,res) => {
-    let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
-    fractionalControlSystem.heatingElement.setState(true);
+    let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'retractArm');
     console.log(`turning on heat`);
     res.json({
-      fractionalTemp:fractionalTemp
+      message:confirmationMessage
+    });
+  })
+router.route('/turnonheat')
+  .get((req,res) => {
+    let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'heatOn');
+    console.log(`turning on heat`);
+    res.json({
+      message:confirmationMessage
     });
   })
 
 router.route('/turnoffheat')
   .get((req,res) => {
-    let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
-    fractionalControlSystem.heatingElement.setState(false);
-    console.log(`turning off heat`);
+    let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'heatOff');
+    console.log(`turning on heat`);
     res.json({
-      fractionalTemp:fractionalTemp
+      message:confirmationMessage
     });
   })
+
+router.route('/fracchecktemp')
+  .get((req,res) => {
+    let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'checkTemp');
+    console.log(`turning on heat`);
+    res.json({
+      message:confirmationMessage
+    });
+  })
+router.route('/openvalve')
+  .get((req,res) => {
+    let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'openValve');
+    console.log(`turning on heat`);
+    res.json({
+      message:confirmationMessage
+    });
+  })
+
+router.route('/closevalve')
+  .get((req,res) => {
+    let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'closeValve');
+    console.log(`turning on heat`);
+    res.json({
+      message:confirmationMessage
+    });
+  })
+
 
 // ***********************************************   Phidget Test Routes   ****************************************
 router.route('/simplifiedprogram')
@@ -210,34 +254,10 @@ router.route('/simplifiedprogram')
     });
   })
 
-router.route('/retractarm')
-  .get((req,res) => {
-    fractionalControlSystem.extendArm.setState(false);
-    fractionalControlSystem.retractArm.setState(true);
-    setTimeout(() => {
-      fractionalControlSystem.retractArm.setState(false)
-    }, 10000);
-    res.json({
-      message:'retracting'
-    });
-  })
-
-router.route('/extendarm')
-  .get((req,res) => {
-    fractionalControlSystem.retractArm.setState(false);
-    fractionalControlSystem.extendArm.setState(true);
-    setTimeout(() => {
-      fractionalControlSystem.extendArm.setState(false)
-    }, 10000);
-    res.json({
-      message:'extending'
-    });
-  })
-
 router.route('*')
   .get((req,res) => {
     var userIP = req.socket.remoteAddress;
-    console.log(userIP);
+    console.log(`user from ${userIP} just pinged the server`);
     res.status(404);
   })
 // ***********************************************   Start API server   ****************************************
