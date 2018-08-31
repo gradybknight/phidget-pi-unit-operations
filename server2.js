@@ -159,10 +159,9 @@ router.route('/setfractional')
   .post((req,res) => {
     serverRunOverview.startAlcohol=parseInt(req.body.startAlcohol);
     serverRunOverview.startVolume=parseInt(req.body.startVolume);
-    serverFractionalStatus=req.body.desiredFractionalState;
     fractionalGraphData=[];
     console.log('starting frac');
-    fractionalStill.startFractionalRun(fractionalGraphData, serverFractionalStatus, serverRunOverview);
+    fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
     res.json({
       serverFractionalStatus:serverFractionalStatus
     })
