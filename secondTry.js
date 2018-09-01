@@ -228,7 +228,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
                     console.log(`Last beaker reached, moving to run termination`);
                     serverRunOverview.message = `Last beaker completed, emptying the still`;
                     endFractionalRun();
-                    serverFractionalStatus = false;
+                    serverRunOverviewLocal.running = false;
                 }
             }
         };
@@ -244,6 +244,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
 
     // Retract arm
     console.log(`Retracting arm for 30 seconds`);
+    serverRunOverviewLocal.running = true;
     moveArmForTime(30000,'retract');
     serverRunOverviewLocal.message = `Retracting arm`;
 

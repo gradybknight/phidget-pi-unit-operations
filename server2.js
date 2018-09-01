@@ -58,6 +58,7 @@ let serverRunOverview = {
   startVolume: 0,
   running:false,
   currentTemperature:0,
+  running:false,
   // startingBeaker:0,
   message:''
 };
