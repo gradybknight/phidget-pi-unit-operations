@@ -150,7 +150,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         let fractionalTemp = fractionalControlSystemLocal.tempProbe.getTemperature();
         let dataPoint = {}
         dataPoint.y = fractionalTemp;
-        dataPoint.x = Date.now() - startTime;
+        dataPoint.x = (Date.now() - startTime)/(1000*60);
         dataPoint.id = Date.now();
         fractionalGraphDataLocal.push(dataPoint);
         serverRunOverviewLocal.currentTemperature = fractionalTemp;
