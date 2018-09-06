@@ -274,6 +274,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         if (currentTemperature > preHeatEndTemperature) {
             // Wait ten minutes, stop monitoring temperature for pre-heat
             serverRunOverviewLocal.message = 'Ten minute wait before processing';
+            serverRunOverviewLocal.timePreHeatComplete = Date.now();
             clearInterval(preheatCheck);
 
             // After ten minute wait, recurse through beaker array, cycling solenoid

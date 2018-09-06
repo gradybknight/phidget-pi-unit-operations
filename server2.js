@@ -54,6 +54,7 @@ let serverRunOverview = {
   timeToCompleteBeaker:'',
   timeToCompleteRun: '',
   timeStarted:'',
+  timePreHeatComplete:'',
   startAlcohol: 0,
   startVolume: 0,
   running:false,
@@ -162,9 +163,9 @@ router.route('/setfractional')
     serverRunOverview.startVolume=parseInt(req.body.startVolume);
     fractionalGraphData=[];
     console.log('starting frac');
-    fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
+    // fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
     res.json({
-      serverFractionalStatus:serverFractionalStatus
+      serverRunOverview:serverRunOverview
     })
   })
 
