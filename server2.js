@@ -159,7 +159,11 @@ router.route('/potgraphdata')
 // ***********************************************   Fractional Still Routes   ****************************************
 router.route('/setfractional')
   .post((req,res) => {
-    serverRunOverview.startAlcohol=parseFloat(req.body.startAlcohol/100);
+    if (parseFloat(req.body.startAlcohol) >1) {
+      serverRunOverview.startAlcohol=parseFloat(req.body.startAlcohol/100);
+    } else {
+      serverRunOverview.startAlcohol=parseFloat(req.body.startAlcohol);
+    }
     serverRunOverview.startVolume=parseFloat(req.body.startVolume);
     fractionalGraphData=[];
     console.log('starting frac');
