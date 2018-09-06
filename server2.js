@@ -169,7 +169,7 @@ router.route('/setfractional')
     console.log('starting frac');
     // fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
     res.json({
-      serverRunOverview:serverRunOverview
+      passedIn:req.body
     })
   })
 
