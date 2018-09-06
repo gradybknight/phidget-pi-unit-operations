@@ -273,7 +273,7 @@ router.route('/closevalve')
 router.route('/simplifiedprogram')
   .get((req,res) => {
     serverRunOverview.startAlcohol=.3;
-    serverRunOverview.startVolume=38.8;
+    serverRunOverview.startVolume=41.64;
     serverFractionalStatus=req.body.desiredFractionalState;
     fractionalGraphData=[];
     fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
