@@ -40,7 +40,7 @@ function handleIndividualFractionalInteraction(fractionalControlSystem, interact
         return (`solenoid valve is closed`)
     } else if (interaction == 'checkTemp') {
         let fractionalTemp = fractionalControlSystemLocal.tempProbe.getTemperature();
-        return fractionalTemp;
+        return `current column temperature is ${fractionalTemp}`;
     };
 };
 
