@@ -169,7 +169,7 @@ router.route('/setfractional')
     // console.log('starting frac');
     // fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
     res.json({
-      passedIn:req.body
+      passedIn:req.body.fractionalStillInitiatingValues
     })
   })
 
@@ -236,7 +236,7 @@ router.route('/turnonheat')
 router.route('/turnoffheat')
   .get((req,res) => {
     let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'heatOff');
-    console.log(`turning on heat`);
+    console.log(`turning off heat`);
     res.json({
       message:confirmationMessage
     });
