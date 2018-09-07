@@ -31,7 +31,7 @@ function handleIndividualFractionalInteraction(fractionalControlSystem, interact
         return (`heating element on`)
     } else if (interaction == 'heatOff') {
         fractionalControlSystemLocal.heatingElement.setState(false);
-        return (`heating element on`)
+        return (`heating element off`)
     } else if (interaction == 'openValve') {
         fractionalControlSystemLocal.solenoid.setState(true);
         return (`solenoid valve is open`)
