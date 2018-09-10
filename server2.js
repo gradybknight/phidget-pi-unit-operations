@@ -169,10 +169,10 @@ router.route('/setfractional')
     serverRunOverview.startVolume=parseFloat(fractionalStillInitiatingValues.startVolume);
     fractionalGraphData=[];
     console.log(serverRunOverview);
-    // fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
-    // res.json({
-    //   message:'started simple program'
-    // });
+    fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
+    res.json({
+      message:'started simple program'
+    });
   })
 
 router.route('/fractionalstatus')
