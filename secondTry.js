@@ -232,7 +232,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
                 }
             }
         };
-        serverRunOverview.timeCurrentBeakerStartes = Date.now();
+        serverRunOverview.timeCurrentBeakerStarted = Date.now();
         runOneCycle(); // one cycle opens solenoid for 500 ms; closes for beaker's close time
     }
 
