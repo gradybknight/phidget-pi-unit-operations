@@ -159,18 +159,18 @@ router.route('/potgraphdata')
 // ***********************************************   Fractional Still Routes   ****************************************
 router.route('/setfractional')
   .post((req,res) => {
-    // if (parseFloat(req.body.startAlcohol) >1) {
-    //   serverRunOverview.startAlcohol=parseFloat(req.body.startAlcohol/100);
-    // } else {
-    //   serverRunOverview.startAlcohol=parseFloat(req.body.startAlcohol);
-    // }
-    // serverRunOverview.startVolume=parseFloat(req.body.startVolume);
-    // fractionalGraphData=[];
-    // console.log('starting frac');
-    // fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
+    if (parseFloat(req.body.fractionalStillInitiatingValues.startAlcohol) >1) {
+      serverRunOverview.startAlcohol=parseFloat(req.body.fractionalStillInitiatingValues.startAlcohol/100);
+    } else {
+      serverRunOverview.startAlcohol=parseFloat(req.body.fractionalStillInitiatingValues.startAlcohol);
+    }
+    serverRunOverview.startVolume=parseFloat(req.body.fractionalStillInitiatingValues.startVolume);
+    fractionalGraphData=[];
+    console.log('starting frac');
+    fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
     res.json({
-      passedIn:req.body.fractionalStillInitiatingValues
-    })
+      message:'started simple program'
+    });
   })
 
 router.route('/fractionalstatus')
@@ -197,15 +197,6 @@ router.route('/fractionalsummary')
       serverRunOverview:serverRunOverview
     });
   })
-
-// router.route('/checkfractionaltemperature')
-//   .get((req,res) => {
-//     let fractionalTemp = fractionalControlSystem.tempProbe.getTemperature();
-//     console.log(`front end asked for fractional temperature. Returning ${fractionalTemp}`);
-//     res.json({
-//       fractionalTemp:fractionalTemp
-//     });
-//   })
 
 router.route('/extendarm')
   .get((req,res) => {
