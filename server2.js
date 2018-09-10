@@ -159,7 +159,7 @@ router.route('/potgraphdata')
 // ***********************************************   Fractional Still Routes   ****************************************
 router.route('/setfractional')
   .post((req,res) => {
-    console.log(fractionalStillInitiatingValues);
+    console.log(req.body.fractionalStillInitiatingValues);
     if (parseFloat(req.body.fractionalStillInitiatingValues.startAlcohol) >1) {
       serverRunOverview.startAlcohol=parseFloat(req.body.fractionalStillInitiatingValues.startAlcohol/100);
     } else {
