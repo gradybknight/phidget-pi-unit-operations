@@ -160,12 +160,12 @@ router.route('/potgraphdata')
 router.route('/setfractional')
   .post((req,res) => {
     console.log(req.body.fractionalStillInitiatingValues);
-    if (Number(req.body.fractionalStillInitiatingValues.startAlcohol) >1) {
-      serverRunOverview.startAlcohol=Number(req.body.fractionalStillInitiatingValues.startAlcohol/100);
+    if (Number(req.body.fractionalStillInitiatingValues[startAlcohol]) >1) {
+      serverRunOverview.startAlcohol=Number(req.body.fractionalStillInitiatingValues[startAlcohol]/100);
     } else {
-      serverRunOverview.startAlcohol=Number(req.body.fractionalStillInitiatingValues.startAlcohol);
+      serverRunOverview.startAlcohol=Number(req.body.fractionalStillInitiatingValues[startAlcohol]);
     }
-    serverRunOverview.startVolume=Number(req.body.fractionalStillInitiatingValues.startVolume);
+    serverRunOverview.startVolume=Number(req.body.fractionalStillInitiatingValues[startVolume]);
     fractionalGraphData=[];
     console.log(serverRunOverview);
     // fractionalStill.startFractionalRun(fractionalGraphData,serverRunOverview,fractionalControlSystem);
