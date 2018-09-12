@@ -86,31 +86,36 @@ conn.connect(fractionalControlSystem)
 
 async function initializePhidgetBoards( fractionalControlSystem) {
   let heatingElement = new phidget22.DigitalOutput();
+  heatingElement.setHubPort(0);
   heatingElement.setChannel(0);
   await heatingElement.open();
   fractionalControlSystem.heatingElement = heatingElement;
   console.log('heating element attached');
 
   let solenoid = new phidget22.DigitalOutput();
+  solenoid.setHubPort(0);
   solenoid.setChannel(1);
   await solenoid.open();
   fractionalControlSystem.solenoid = solenoid;
   console.log('solenoid attached');
 
   let extendArm = new phidget22.DigitalOutput();
+  extendArm.setHubPort(0);
   extendArm.setChannel(2);
   await extendArm.open();
   fractionalControlSystem.extendArm = extendArm;
   console.log('arm extender attached');
 
   let retractArm = new phidget22.DigitalOutput();
+  retractArm.setHubPort(0);
   retractArm.setChannel(3);
   await retractArm.open();
   fractionalControlSystem.retractArm = retractArm;
   console.log('arm retractor attached');
 
   var tempProbe = new phidget22.TemperatureSensor();
-  tempProbe.setChannel(0);
+  tempProbe.setHubPort(1);
+  tempProbe.setChannel(1);
   tempProbe.setDataInterval(500);
   await tempProbe.open();
   fractionalControlSystem.tempProbe = tempProbe;
