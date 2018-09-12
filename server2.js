@@ -74,7 +74,7 @@ let fractionalControlSystem = {
 let potControlSystem = {
   potHeatingElement:'',
   columnTemperature:'',
-  chillerReturnWaterTemperature
+  chillerReturnWaterTemperature:''
 }
 
 
