@@ -8,6 +8,7 @@ const phidget22 = require('phidget22');
 // ***********************************************   Unit Ops Module Imports   ****************************************
 const fractionalStill = require('./secondTry');
 const fractionalStillSingleInteraction = require('./fractionalstillinteractions');
+const potStill = require('./unitOperations/potStill');
 
 // ***********************************************   Express Server Setup   *******************************************
 const PORT = 3001;
@@ -42,8 +43,24 @@ app.use(function(req, res, next) {
 
 
 // ***********************************************   Pot Still Variables   *******************************************
-let serverPotStatus = false;
-let serverGraphData = [];
+// let serverPotStatus = false;
+let potGraphData = [];
+let serverPotOverview = {
+  isGinRun:false,
+  running:false,
+  runStartTime:'',
+  forcedTerminationTime:'',
+  requiresStrippingRun:false,
+  runEndTime:'',
+  columnTemperature:'',
+  message:''
+}
+
+let potControlSystem = {
+  potHeatingElement:'',
+  columnTemperature:'',
+  chillerReturnWaterTemperature:''
+}
 
 // ***********************************************   Fractional Still Variables   ************************************
 let fractionalGraphData = [];
@@ -71,11 +88,6 @@ let fractionalControlSystem = {
   tempProbe:''
 };
 
-let potControlSystem = {
-  potHeatingElement:'',
-  columnTemperature:'',
-  chillerReturnWaterTemperature:''
-}
 
 
 // ***********************************************   Phidget Board Initialization ************************************
@@ -149,21 +161,12 @@ async function initializePhidgetBoards( fractionalControlSystem, potControlSyste
 // ***********************************************   Routes   ********************************************************
 
 // ***********************************************   Pot Still Routes   **********************************************
-router.route('/setpot')
-  .post((req,res) => {
-    serverPotStatus = req.body.desiredPotState
-    flashingLights.runDemo();
-    res.json({
-      serverPotStatus:serverPotStatus
-    });
-  })
-
 router.route('/potstatus')
   .get((req,res) => {
     console.log('front end asked what is the pot status')
     console.log(`server status is ${serverPotStatus}`);
     res.json({
-      serverPotStatus:serverPotStatus
+      serverPotOverview:serverPotOverview
     });
   })
 
@@ -171,7 +174,7 @@ router.route('/potgraphdata')
   .get((req,res) => {
     console.log('front end asked for graph data')
     res.json({
-      serverGraphData:serverGraphData
+      potGraphData:potGraphData
     });
   })
 
@@ -179,6 +182,26 @@ router.route('/getpotcolumntemperature')
   .get((req,res) => {
     let confirmationMessage = potControlSystem.columnTemperature.getTemperature();
     console.log(`turning on heat`);
+    res.json({
+      message:confirmationMessage
+    });
+  })
+
+router.route('/potheaton')
+  .get((req,res) => {
+    let confirmationMessage = `pot heat on`;
+    console.log(`turning on pot heat`);
+    potControlSystem.potHeatingElement.setState(true);
+    res.json({
+      message:confirmationMessage
+    });
+  })
+
+router.route('/potheatoff')
+  .get((req,res) => {
+    let confirmationMessage = `pot heat off`;
+    console.log(`turning off pot heat`);
+    potControlSystem.potHeatingElement.setState(false);
     res.json({
       message:confirmationMessage
     });
@@ -266,7 +289,7 @@ router.route('/turnoffheat')
 router.route('/fracchecktemp')
   .get((req,res) => {
     let confirmationMessage = fractionalStillSingleInteraction.handleIndividualFractionalInteraction(fractionalControlSystem, 'checkTemp');
-    console.log(`turning on heat`);
+    console.log(`returned temperature`);
     res.json({
       message:confirmationMessage
     });
