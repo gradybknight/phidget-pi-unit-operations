@@ -1,7 +1,7 @@
 // This module receives:
 // potGraphData: array where each object is: x (elapsed time in seconds), y (temperature), id (Date.now() to use as identifier)
 // serverPotOverview: object {startAlcohol, startVolume, timeLimitInHours message, running, currentTemperature}. 
-// potControlSystem: object containing phidget mapping for heatingElement, columnTemperature, chillerReturnWaterTemperature
+// potControlSystem: object containing phidget mapping for potHeatingElement, columnTemperature, chillerReturnWaterTemperature
 
 
 function startFractionalRun(potGraphData, serverPotOverview, potControlSystem) {

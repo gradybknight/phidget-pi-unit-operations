@@ -64,12 +64,18 @@ let serverRunOverview = {
   message:''
 };
 let fractionalControlSystem = {
-          heatingElement:'',
-          solenoid:'',
-          retractArm:'',
-          extendArm:'',
-          tempProbe:''
+  heatingElement:'',
+  solenoid:'',
+  retractArm:'',
+  extendArm:'',
+  tempProbe:''
 };
+
+let potControlSystem = {
+  potHeatingElement:'',
+  columnTemperature:'',
+  chillerReturnWaterTemperature
+}
 
 
 // ***********************************************   Phidget Board Initialization ************************************
@@ -77,14 +83,14 @@ console.log('Phidget connecting');
 var SERVER_PORT = 5661;
 var hostName = '127.0.0.1';
 var conn = new phidget22.Connection(SERVER_PORT, hostName, { name: 'Server Connection', passwd: '' });
-conn.connect(fractionalControlSystem)
-  .then(initializePhidgetBoards(fractionalControlSystem))
+conn.connect(fractionalControlSystem, potControlSystem)
+  .then(initializePhidgetBoards(fractionalControlSystem, potControlSystem))
   .catch(function (err) {
     console.error('Error connecting to phidget:', err.message);
     process.exit(1);
   });
 
-async function initializePhidgetBoards( fractionalControlSystem) {
+async function initializePhidgetBoards( fractionalControlSystem, potControlSystem) {
   let heatingElement = new phidget22.DigitalOutput();
   heatingElement.setHubPort(0);
   heatingElement.setChannel(0);
@@ -120,14 +126,22 @@ async function initializePhidgetBoards( fractionalControlSystem) {
   await tempProbe.open();
   fractionalControlSystem.tempProbe = tempProbe;
   console.log('temp probe attached');
-
-  // fractionalControlSystem = {
-  //     heatingElement:heatingElement,
-  //     solenoid:solenoid,
-  //     extendArm:extendArm,
-  //     retractArm:retractArm,
-  //     tempProbe:tempProbe
-  // };
+  
+  var columnTemperature = new phidget22.TemperatureSensor();
+  columnTemperature.setHubPort(1);
+  columnTemperature.setChannel(0);
+  columnTemperature.setDataInterval(500);
+  await columnTemperature.open();
+  potControlSystem.columnTemperature = columnTemperature;
+  console.log('pot temp probe attached');
+  
+  let potHeatingElement = new phidget22.DigitalOutput();
+  potHeatingElement.setHubPort(2);
+  potHeatingElement.setChannel(0);
+  await potHeatingElement.open();
+  potControlSystem.potHeatingElement = potHeatingElement;
+  console.log('pot heating element attached');
+  
   console.log(`Fractional still control system established`);
   return true;
 }
@@ -158,6 +172,15 @@ router.route('/potgraphdata')
     console.log('front end asked for graph data')
     res.json({
       serverGraphData:serverGraphData
+    });
+  })
+
+router.route('/getpotcolumntemperature')
+  .get((req,res) => {
+    let confirmationMessage = potControlSystem.columnTemperature.getTemperature();
+    console.log(`turning on heat`);
+    res.json({
+      message:confirmationMessage
     });
   })
 
