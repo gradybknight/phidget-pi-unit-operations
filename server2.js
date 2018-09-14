@@ -62,6 +62,9 @@ let potControlSystem = {
   chillerReturnWaterTemperature:''
 }
 
+let potTemperatureLoggingInterval = {};
+let potLoggingStartTime = {};
+
 // ***********************************************   Fractional Still Variables   ************************************
 let fractionalGraphData = [];
 let serverRunOverview = {
@@ -161,7 +164,7 @@ async function initializePhidgetBoards( fractionalControlSystem, potControlSyste
 // ***********************************************   Routes   ********************************************************
 
 // ***********************************************   Pot Still Routes   **********************************************
-router.route('/potstatus')
+router.route('/potsummary')
   .get((req,res) => {
     console.log('front end asked what is the pot status')
     console.log(`server status is ${serverPotStatus}`);
@@ -185,6 +188,22 @@ router.route('/getpotcolumntemperature')
     res.json({
       message:confirmationMessage
     });
+  })
+
+router.route('/startpottemperaturelogging')
+  .get((req,res) => {
+    potLoggingStartTime = Date.now();
+    potTemperatureLoggingInterval = setInterval(() => {
+      let dataPoint = {}
+      dataPoint.y = potControlSystem.columnTemperature.getTemperature();
+      dataPoint.x = (Date.now() - potLoggingStartTime)/(1000*60);
+      dataPoint.id = Date.now();
+      potGraphData.push(dataPoint);
+    },60000)
+    let confirmationMessage = `logging started`;
+    res.json({
+      message:confirmationMessage
+    })
   })
 
 router.route('/potheaton')

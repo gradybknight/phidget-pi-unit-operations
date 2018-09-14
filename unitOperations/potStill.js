@@ -16,7 +16,7 @@
 //   }
 
 function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
-    const termminationTemperature = 209.5;
+    const termminationTemperature = 99.0; // celsius
     
     let startTime = Date.now();
     let potGraphDataLocal = potGraphData;
