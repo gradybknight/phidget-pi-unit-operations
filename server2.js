@@ -167,7 +167,7 @@ async function initializePhidgetBoards( fractionalControlSystem, potControlSyste
 router.route('/potsummary')
   .get((req,res) => {
     console.log('front end asked what is the pot status')
-    console.log(`server status is ${serverPotStatus}`);
+    console.log(`server status is ${serverPotOverview}`);
     res.json({
       serverPotOverview:serverPotOverview
     });

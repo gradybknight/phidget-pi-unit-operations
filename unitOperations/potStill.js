@@ -51,6 +51,9 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     serverPotOverviewLocal.running=true;
     serverPotOverviewLocal.timeStarted = startTime;
 
+    // Clear previous temperature data
+    potGraphDataLocal = [];
+
     // Set the time limit in milliseconds
     let runTimeInMilliSeconds = serverPotOverviewLocal.forcedTerminationTime * 60 * 60 * 1000; //hours * 60 min/hour * 60 secos/min * 1000 ms/sec
 
