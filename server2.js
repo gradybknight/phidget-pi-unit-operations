@@ -201,6 +201,7 @@ router.route('/startpottemperaturelogging')
       potGraphData.push(dataPoint);
     },60000)
     let confirmationMessage = `logging started`;
+    serverPotOverview.columnTemperature = potControlSystem.columnTemperature.getTemperature();
     res.json({
       message:confirmationMessage
     })
