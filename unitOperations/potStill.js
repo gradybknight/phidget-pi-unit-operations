@@ -22,8 +22,8 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     let potGraphDataLocal = potGraphData;
     let serverPotOverviewLocal = serverPotOverview;
     let potControlSystemLocal = potControlSystem;
-    let temperatureLogging = '';
-    let runTimer = '';
+    // let temperatureLogging = '';
+    // let runTimer = '';
     
 
     function logTemperature() {
@@ -66,7 +66,7 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
 
     // Turn on temperature logging.  This will build graph data and terminate run if target temperature is reached
     console.log(`Initiating Temperature logging`);
-    temperatureLogging = setInterval(logTemperature, 60*1000); // log temperature every minute
+    let temperatureLogging = setInterval(logTemperature, 60*1000); // log temperature every minute
     
     // Turn on heating element
     potControlSystemLocal.potHeatingElement.setState(true);
@@ -74,7 +74,7 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     serverRunOverviewLocal.message = `Heating element is active`;
 
     // Set timeout for total run time
-    runTimer = setTimeout(() => {
+    let runTimer = setTimeout(() => {
         serverPotOverviewLocal.requiresStrippingRun = true;  // If the program terminates due to time, make the next run a stripping run
         endPotRun()
     }, runTimeInMilliSeconds);
