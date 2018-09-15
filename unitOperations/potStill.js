@@ -67,10 +67,14 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     serverRunOverviewLocal.message = `Heating element is active`;
 
     // Set timeout for total run time
-    runTimer = setTimeout(() => {endPotRun()}, runTimeInMilliSeconds);
+    runTimer = setTimeout(() => {
+        serverPotOverviewLocal.requiresStrippingRun = true;
+        endPotRun()
+    }, runTimeInMilliSeconds);
 
     // Monitor temperature until target temperature is attained
     if (serverPotOverviewLocal.columnTemperature >= termminationTemperature) {
+        serverPotOverviewLocal.requiresStrippingRun = false;
         endPotRun();
     }
 };

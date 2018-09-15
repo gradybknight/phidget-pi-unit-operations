@@ -210,7 +210,7 @@ router.route('/startpottemperaturelogging')
 
 router.route('/stoppottemperaturelogging')
   .get((req,res) => {
-    clearInterval(potLoggingStartTime);
+    clearInterval(potTemperatureLoggingInterval);
     let confirmationMessage = `logging terminated`;
     res.json({
       message:confirmationMessage
