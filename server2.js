@@ -199,9 +199,19 @@ router.route('/startpottemperaturelogging')
       dataPoint.x = (Date.now() - potLoggingStartTime)/(1000*60);
       dataPoint.id = Date.now();
       potGraphData.push(dataPoint);
+      serverPotOverview.columnTemperature = dataPoint.y;
     },60000)
     let confirmationMessage = `logging started`;
     serverPotOverview.columnTemperature = potControlSystem.columnTemperature.getTemperature();
+    res.json({
+      message:confirmationMessage
+    })
+  })
+
+router.route('/stoppottemperaturelogging')
+  .get((req,res) => {
+    clearInterval(potLoggingStartTime);
+    let confirmationMessage = `logging terminated`;
     res.json({
       message:confirmationMessage
     })
@@ -226,6 +236,26 @@ router.route('/potheatoff')
       message:confirmationMessage
     });
   })
+
+router.route('/resetpotafterginrun')
+  .get((req,res) => {
+    let confirmationMessage = `pot is reset`;
+    serverPotOverview.requiresStrippingRun = false;
+    res.json({
+      message:confirmationMessage
+    });
+  })
+
+router.route('/setpot')
+  .post((req,res) => {
+    let potStillInitiatingValues = JSON.parse(req.body.potStillInitiatingValues);
+    serverPotOverview.forcedTerminationTime = potStillInitiatingValues.forcedTerminationTime;
+    potGraphData = [];
+    potStill.startPotRun(potGraphData,serverPotOverview,potControlSystem);
+    res.json({
+      message:'Started Pot Run'
+    });
+  });
 
 // ***********************************************   Fractional Still Routes   ****************************************
 router.route('/setfractional')
