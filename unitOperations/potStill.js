@@ -34,6 +34,12 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
         dataPoint.id = Date.now();
         potGraphDataLocal.push(dataPoint);
         serverPotOverviewLocal.columnTemperature = potColumnTemperature;
+
+        // Monitor temperature until target temperature is attained
+        if (serverPotOverviewLocal.columnTemperature >= termminationTemperature) {
+            serverPotOverviewLocal.requiresStrippingRun = false;  // If temperature endpoint is reached, no stripping is required
+            endPotRun();
+        }
     }
 
     function endPotRun() {  
@@ -50,6 +56,7 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     // Tell server that the program is running
     serverPotOverviewLocal.running=true;
     serverPotOverviewLocal.timeStarted = startTime;
+    serverPotOverviewLocal.requiresStrippingRun ? serverPotOverviewLocal.forcedTerminationTime = 8 : ''; // This forces the program to run a stripping run after gin runs
 
     // Clear previous temperature data
     potGraphDataLocal = [];
@@ -57,7 +64,7 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     // Set the time limit in milliseconds
     let runTimeInMilliSeconds = serverPotOverviewLocal.forcedTerminationTime * 60 * 60 * 1000; //hours * 60 min/hour * 60 secos/min * 1000 ms/sec
 
-    // Turn on temperature logging
+    // Turn on temperature logging.  This will build graph data and terminate run if target temperature is reached
     console.log(`Initiating Temperature logging`);
     temperatureLogging = setInterval(logTemperature, 60*1000); // log temperature every minute
     
@@ -68,15 +75,11 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
 
     // Set timeout for total run time
     runTimer = setTimeout(() => {
-        serverPotOverviewLocal.requiresStrippingRun = true;
+        serverPotOverviewLocal.requiresStrippingRun = true;  // If the program terminates due to time, make the next run a stripping run
         endPotRun()
     }, runTimeInMilliSeconds);
 
-    // Monitor temperature until target temperature is attained
-    if (serverPotOverviewLocal.columnTemperature >= termminationTemperature) {
-        serverPotOverviewLocal.requiresStrippingRun = false;
-        endPotRun();
-    }
+    
 };
 
 module.exports.startPotRun = startPotRun;
