@@ -165,6 +165,13 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         serverRunOverviewLocal.timeToCompleteRun = totalTime;
     };
 
+    function updateBeakerEndTimes() {
+        for (let i=0; i<overallRunArray.length; i++) {
+            overallRunArray[i].expectedBeakerEndTime = Date.now() + (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
+        }
+        console.log(`${overallRunArray}`);
+    }
+
     function endFractionalRun() {
         function closeSoleniod() {
             fractionalControlSystemLocal.solenoid.setState(false);
@@ -198,12 +205,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
             setTimeout(waitUntilNextCycle, fractionInformation.closeTime);
         };
 
-        function updateBeakerEndTimes() {
-            for (let i=0; i<overallRunArray.length; i++) {
-                overallRunArray[i].expectedBeakerEndTime = Date.now() + (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
-            }
-            console.log(`${overallRunArray}`);
-        }
+        
     
         function waitUntilNextCycle() {
             fractionCounter++;
