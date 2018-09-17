@@ -58,9 +58,6 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     serverPotOverviewLocal.timeStarted = startTime;
     serverPotOverviewLocal.requiresStrippingRun ? serverPotOverviewLocal.forcedTerminationTime = 8 : ''; // This forces the program to run a stripping run after gin runs
 
-    // Clear previous temperature data
-    potGraphDataLocal = [];
-
     // Set the time limit in milliseconds
     let runTimeInMilliSeconds = serverPotOverviewLocal.forcedTerminationTime * 60 * 60 * 1000; //hours * 60 min/hour * 60 secos/min * 1000 ms/sec
 

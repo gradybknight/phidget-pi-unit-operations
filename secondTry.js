@@ -197,6 +197,12 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
             fractionalControlSystemLocal.solenoid.setState(false);
             setTimeout(waitUntilNextCycle, fractionInformation.closeTime);
         };
+
+        function updateBeakerEndTimes() {
+            for (let i=0; i<serverRunOverviewLocal.beakerArray.length; i++) {
+                serverRunOverviewLocal.beakerArray[i].expectedBeakerEndTime = Date.now() + (beakerArray[i].closeTime + 0.5) * beakerArray[i].cycleCount;
+            }
+        }
     
         function waitUntilNextCycle() {
             fractionCounter++;
@@ -209,6 +215,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
                 // move to next beaker in overall array                
                 positionInOverallArray++;
                 console.log(`moving to next beaker ${positionInOverallArray}`);
+                updateBeakerEndTimes();
                 // if the current beaker has a next function, run it.  Currently used to move actuator arm
                 if (fractionInformation.nextFunction) {
                     // run end of fraction function; currently only used to move actuator arm
@@ -256,6 +263,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
 
     // Update server with estimated time to complete
     updateExpectedTotalRunTime();
+    updateBeakerEndTimes();
 
     // Turn on temperature logging
     console.log(`Initiating Temperature logging`);
@@ -276,6 +284,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
             // Wait ten minutes, stop monitoring temperature for pre-heat
             serverRunOverviewLocal.message = 'Ten minute wait before processing';
             serverRunOverviewLocal.timePreHeatComplete = Date.now();
+            updateBeakerEndTimes();
             clearInterval(preheatCheck);
 
             // After ten minute wait, recurse through beaker array, cycling solenoid
