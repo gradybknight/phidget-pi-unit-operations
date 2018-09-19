@@ -67,6 +67,9 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     
     // Turn on heating element
     potControlSystemLocal.potHeatingElement.setState(true);
+    if ( serverPotOverviewLocal.forcedTerminationTime > 10 ) {
+        potControlSystemLocal.potHeatingElementHighVoltage.setState(true);
+    }
     console.log(`Heating element turned on`);
     serverRunOverviewLocal.message = `Heating element is active`;
 

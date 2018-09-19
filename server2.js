@@ -58,6 +58,7 @@ let serverPotOverview = {
 
 let potControlSystem = {
   potHeatingElement:'',
+  potHeatingElementHighVoltage:'',
   columnTemperature:'',
   chillerReturnWaterTemperature:''
 }
@@ -155,6 +156,13 @@ async function initializePhidgetBoards( fractionalControlSystem, potControlSyste
   potHeatingElement.setChannel(0);
   await potHeatingElement.open();
   potControlSystem.potHeatingElement = potHeatingElement;
+  console.log('pot heating element attached');
+
+  let potHeatingElementHighVoltage = new phidget22.DigitalOutput();
+  potHeatingElementHighVoltage.setHubPort(2);
+  potHeatingElementHighVoltage.setChannel(1);
+  await potHeatingElementHighVoltage.open();
+  potControlSystem.potHeatingElementHighVoltage = potHeatingElementHighVoltage;
   console.log('pot heating element attached');
   
   console.log(`Fractional still control system established`);
