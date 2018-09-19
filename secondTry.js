@@ -166,8 +166,16 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     };
 
     function updateBeakerEndTimes() {
+        let timePreviousStepCompleted = Date.now();
+        if ( serverRunOverviewLocal.timePreHeatComplete == '') {
+            timePreviousStepCompleted = Date.now() + 2.5 * 60 * 60 * 1000 + 10 * 60 * 1000;  // estimate 2.5h to preheat + 10 minutes to reflux
+        } else {
+            timePreviousStepCompleted = serverRunOverviewLocal.timePreHeatComplete;
+        }
         for (let i=0; i<overallRunArray.length; i++) {
-            overallRunArray[i].expectedBeakerEndTime = Date.now() + (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
+            let expectedBeakerEndTime = timePreviousStepCompleted + (overallRunArray[i].closeTime + 0.5) * overallRunArray[i].cycleCount;
+            overallRunArray[i].expectedBeakerEndTime = expectedBeakerEndTime;
+            timePreviousStepCompleted = expectedBeakerEndTime;
         }
         console.log(`${overallRunArray}`);
     }
@@ -249,9 +257,10 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
 
     // **********************************  Main program ********************************** //
     
-    // Tell server that the program is running
+    // Tell server that the program is running and set key timepoints
     serverRunOverviewLocal.running=true;
     serverRunOverviewLocal.timeStarted = startTime;
+    serverRunOverviewLocal.timePreHeatComplete = '';
 
     // Retract arm
     console.log(`Retracting arm for 30 seconds`);
@@ -287,12 +296,11 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
             // Wait ten minutes, stop monitoring temperature for pre-heat
             serverRunOverviewLocal.message = 'Ten minute wait before processing';
             serverRunOverviewLocal.timePreHeatComplete = Date.now();
-            // updateBeakerEndTimes();
             clearInterval(preheatCheck);
 
             // After ten minute wait, recurse through beaker array, cycling solenoid
             setTimeout(() => {
-                // updateExpectedTotalRunTime();
+                updateBeakerEndTimes();
                 serverRunOverviewLocal.currentBeaker = 0;
                 serverRunOverviewLocal.totalClickCountInBeaker = overallRunArray[0].cycleCount;
                 serverRunOverviewLocal.message = overallRunArray[0].overallFraction;
