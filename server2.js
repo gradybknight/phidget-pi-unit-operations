@@ -257,6 +257,7 @@ router.route('/resetpotafterginrun')
 router.route('/setpot')
   .post((req,res) => {
     let potStillInitiatingValues = JSON.parse(req.body.potStillInitiatingValues);
+    console.log(potStillInitiatingValues);
     serverPotOverview.forcedTerminationTime = potStillInitiatingValues.forcedTerminationTime;
     potGraphData = [];
     serverPotOverview.potStillInitiatingValues = potStillInitiatingValues;
