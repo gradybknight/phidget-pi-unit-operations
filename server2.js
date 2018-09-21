@@ -259,6 +259,7 @@ router.route('/setpot')
     let potStillInitiatingValues = JSON.parse(req.body.potStillInitiatingValues);
     serverPotOverview.forcedTerminationTime = potStillInitiatingValues.forcedTerminationTime;
     potGraphData = [];
+    serverPotOverview.potStillInitiatingValues = potStillInitiatingValues;
     potStill.startPotRun(potGraphData,serverPotOverview,potControlSystem);
     res.json({
       message:'Started Pot Run'

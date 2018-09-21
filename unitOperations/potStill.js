@@ -40,7 +40,9 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     // Tell server that the program is running
     serverPotOverviewLocal.running=true;
     serverPotOverviewLocal.timeStarted = startTime;
-    serverPotOverviewLocal.requiresStrippingRun ? serverPotOverviewLocal.forcedTerminationTime = 8 : ''; // This forces the program to run a stripping run after gin runs
+
+    // This forces the program to run a stripping run after gin runs
+    serverPotOverviewLocal.requiresStrippingRun ? serverPotOverviewLocal.forcedTerminationTime = 8 : ''; 
 
     // Set the time limit in milliseconds
     let runTimeInMilliSeconds = serverPotOverviewLocal.forcedTerminationTime * 60 * 60 * 1000; //hours * 60 min/hour * 60 secos/min * 1000 ms/sec
@@ -58,7 +60,7 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     serverRunOverviewLocal.message = `Heating element is active`;
 
     // Set timeout for total run time
-    runTimer = setTimeout(() => {
+    runTimer = setTimeout( () => {
         serverPotOverviewLocal.requiresStrippingRun = true;  // If the program terminates due to time, make the next run a stripping run
         endPotRun()
     }, runTimeInMilliSeconds);
