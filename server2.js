@@ -235,11 +235,22 @@ router.route('/potheaton')
     });
   })
 
+router.route('/pothighvoltageheaton')
+  .get((req,res) => {
+    let confirmationMessage = `pot heat on`;
+    console.log(`turning on pot heat`);
+    potControlSystem.potHeatingElementHighVoltage.setState(true);
+    res.json({
+      message:confirmationMessage
+    });
+  })
+
 router.route('/potheatoff')
   .get((req,res) => {
     let confirmationMessage = `pot heat off`;
     console.log(`turning off pot heat`);
     potControlSystem.potHeatingElement.setState(false);
+    potControlSystem.potHeatingElementHighVoltage.setState(false);
     res.json({
       message:confirmationMessage
     });

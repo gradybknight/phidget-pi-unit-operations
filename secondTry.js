@@ -9,6 +9,11 @@
 // serverRunOverview: object {currentBeaker, currentClickCountInBeaker, totalClickCountInBeaker, 
 //                            timeToCompleteBeaker, timeToCompleteRun, startAlcohol, startVolume, message, running}. 
 
+// import UUID
+const uuidv1 = require('uuid/v1'); 
+
+// database ORM
+const awsDatabaseOperations = require('./databaseOperations/writeToAWS');
 
 function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalControlSystem) {
     // physical parameters and relay mapping
@@ -16,6 +21,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
     const lastFractionForHeads = 5;
     const lastFractionForHearts = 16;
     const preHeatEndTemperature = 45;
+    const batchID = uuidv1();
 
     let startTime = Date.now();
     let fractionalGraphDataLocal = fractionalGraphData;
@@ -154,6 +160,13 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         dataPoint.id = Date.now();
         fractionalGraphDataLocal.push(dataPoint);
         serverRunOverviewLocal.currentTemperature = fractionalTemp;
+        let awsTimePointData = {};
+        awsTimePointData.batchID = batchID;
+        awsTimePointData.epochtime = Date.now()/1000;
+        awsTimePointData.temperature = fractionalTemp;
+        awsTimePointData.elapsedtime = dataPoint.x;
+        awsTimePointData.messageID="";
+        awsDatabaseOperations.writeFractionalTimePoint(awsTimePointData);
     }
 
     function updateExpectedTotalRunTime() {

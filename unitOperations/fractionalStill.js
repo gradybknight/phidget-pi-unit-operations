@@ -8,6 +8,12 @@
 // import phidget library
 const phidget22 = require('phidget22');
 
+// import UUID
+const uuidv1 = require('uuid/v1'); 
+
+// database ORM
+const awsDatabaseOperations = require('../databaseOperations/writeToAWS');
+
 // physical parameters and relay mapping
 const heatingElement = 1;
 const solenoidValve = 2;
