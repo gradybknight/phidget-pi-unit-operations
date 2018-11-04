@@ -2,7 +2,7 @@ const axios = require('axios');
 const secretCode = 'morecowbell';
 
 module.exports = {
-    writeFractionalTimepoint: function(timePointData,unitOperation) {
+    writeStillTimepoint: function(timePointData,unitOperation) {
         let timePointMessage = JSON.stringify({
             timePointData:timePointData,
             secretCode:secretCode,

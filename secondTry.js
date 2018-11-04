@@ -167,7 +167,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
             elapsedtime:dataPoint.x,
             messageID:''
         };
-        awsDatabaseOperations.writeFractionalTimepoint(timePointData,'fractional');
+        awsDatabaseOperations.writeStillTimepoint(timePointData,'fractional');
     }
 
     function updateExpectedTotalRunTime() {

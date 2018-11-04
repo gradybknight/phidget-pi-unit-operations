@@ -1,7 +1,15 @@
+// import UUID
+const uuidv1 = require('uuid/v1'); 
+
+// database ORM
+const awsDatabaseOperations = require('../databaseOperations/writeToAWS');
+
+
 function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
     const termminationTemperature = 99.5; // celsius
     
     let startTime = Date.now();
+    const batchID = uuidv1();
     let potGraphDataLocal = potGraphData;
     let serverPotOverviewLocal = serverPotOverview;
     let potControlSystemLocal = potControlSystem;
@@ -17,6 +25,15 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
         dataPoint.id = Date.now();
         potGraphDataLocal.push(dataPoint);
         serverPotOverviewLocal.columnTemperature = potColumnTemperature;
+        
+        let timePointData = {
+            batchID:batchID,
+            epochtime = Date.now()/1000,
+            temperature:potColumnTemperature,
+            elapsedtime:dataPoint.x,
+            messageID:''
+        }; 
+        awsDatabaseOperations.writeStillTimepoint(timePointData,'pot');
 
         // Monitor temperature until target temperature is attained
         if (serverPotOverviewLocal.columnTemperature >= termminationTemperature) {
