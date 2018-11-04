@@ -160,13 +160,14 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         dataPoint.id = Date.now();
         fractionalGraphDataLocal.push(dataPoint);
         serverRunOverviewLocal.currentTemperature = fractionalTemp;
-        let awsTimePointData = {};
-        awsTimePointData.batchID = batchID;
-        awsTimePointData.epochtime = Date.now()/1000;
-        awsTimePointData.temperature = fractionalTemp;
-        awsTimePointData.elapsedtime = dataPoint.x;
-        awsTimePointData.messageID="";
-        awsDatabaseOperations.writeFractionalTimePoint(awsTimePointData);
+        let timePointData = {
+            batchID:batchID,
+            epochtime = Date.now()/1000,
+            temperature:fractionalTemp,
+            elapsedtime:dataPoint.x,
+            messageID:''
+        };
+        awsDatabaseOperations.writeFractionalTimepoint(timePointData,'fractional');
     }
 
     function updateExpectedTotalRunTime() {
