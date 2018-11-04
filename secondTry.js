@@ -162,7 +162,7 @@ function startFractionalRun(fractionalGraphData, serverRunOverview, fractionalCo
         serverRunOverviewLocal.currentTemperature = fractionalTemp;
         let timePointData = {
             batchID:batchID,
-            epochtime = Date.now()/1000,
+            epochtime:Date.now()/1000,
             temperature:fractionalTemp,
             elapsedtime:dataPoint.x,
             messageID:''
