@@ -28,7 +28,7 @@ function startPotRun(potGraphData, serverPotOverview, potControlSystem) {
         
         let timePointData = {
             batchID:batchID,
-            epochtime = Date.now()/1000,
+            epochtime: Date.now()/1000,
             temperature:potColumnTemperature,
             elapsedtime:dataPoint.x,
             messageID:''
